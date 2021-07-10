@@ -1,0 +1,73 @@
+	
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://labyaddons.de/">
+	<meta property="og:title" content="labyaddons.de - The LabyMod Addon List">
+	<meta property="og:description" content="This is a list of all offical and inoffical LabyMod Addons.">
+	<meta property="og:image" content="https://i.imgur.com/SDbRq5U.png">
+
+<link rel="stylesheet" href="./static/css/index.css">
+<script src="https://kit.fontawesome.com/bbb45cb41a.js" crossorigin="anonymous"></script>
+
+
+<div class="wrapper-addon">
+	<div class="wrapper">
+		<div class="tab">
+			<button class="tablinks" onclick="openTab(event, 'store_offical')" id="offical">Offical Store</button>
+			<button class="tablinks" onclick="openTab(event, 'store_inoffical')" id="inoffical">Inoffical Store</button>
+		</div>
+			<!-- Tab content -->
+			<div data-to="offical" id="store_offical" class="tabcontent">
+					<div class="center">
+						<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
+						<div class="select">
+						<select id="offical-version">
+							<option selected value="18">1.8</option>
+							<option value="112">1.12</option>
+							<option value="116">1.16</option>
+						</select>
+						<div class="select_arrow">
+					</div>
+					</div>
+					<button class="btn share" id="share" onclick="share();"><i class="fas fa-share-alt"></i></button>
+				</div>
+				<div id="offical-addons" class="addons"></div>
+			</div>
+			<div data-to="inoffical" id="store_inoffical" class="tabcontent">
+					<div class="center">
+						<input type="text" autocomplete="off" id="inoffical-search" class="search" placeholder="Search..."/>
+						<div class="select">
+							<select id="inoffical-version">
+								<option selected value="18">1.8</option>
+								<option value="112">1.12</option>
+								<option value="116">1.16</option>
+							</select>
+							<div class="select_arrow">
+							</div>
+					</div>
+					<button class="btn share" id="share" onclick="share();"><i class="fas fa-share-alt"></i></button>
+					</div>
+				<div id="inoffical-addons"  class="addons"></div>
+			</div>
+	</div>
+
+
+
+</div>
+
+
+
+
+<template id="addon-template">
+	<div class="addon-card">
+	<img id="icon" src="#" alt="NAME" class="addon-img">
+	<div class="addon-text">
+		<h2 id="name">ADDON NAME</h2>
+		<p id="author">ADDON AUTHOR</p>
+		<p id="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate incidunt recusandae at? Est odit suscipit consequuntur? Dignissimos aut assumenda tempore, a perspiciatis odit quas voluptatum optio dicta, ex tempora doloremque.</p>
+	</div>  
+	<div class="vertical-center">
+		<button class="btn download" id="download" onclick="download(this);"><i class="fas fa-download"></i></button>
+	</div>
+</template>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./static/js/app.js"></script>

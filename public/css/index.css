@@ -1,0 +1,275 @@
+@font-face {
+    font-family: Minecraft;
+    src: url(../fonts/minecraft.woff2) format('woff2');
+}
+body {
+    background-image: url(../images/bg.png);
+}
+* {
+    color: white;
+    margin: 0;
+}
+[type="text"]{
+    background-color: rgba(0, 0, 0, .5) !important;
+    padding: 8px 8px 4px 8px !important;
+    line-height: .5 !important;
+    border: none !important;
+    border: 2.5px solid transparent !important;
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    color: white !important;
+
+}
+[type="text"].search{
+    font-size: 25px !important;
+}
+[type="text"]:focus{
+    outline: none !important;
+    border: 2.5px solid rgba(102, 100, 100, 0.5) !important;
+}
+.addons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 35px;
+    overflow-y: scroll;
+    height: 80vh;
+}
+.wrapper-addon .left{
+    position: fixed;
+}
+.wrapper-addon .center{
+    display: flex;
+    justify-content: center;
+}
+.wrapper-addon #search{
+    margin-top: 25px;
+}
+[type="checkbox"]{
+    background-color: #C0C0C0;
+    height: 40px;
+    width: 40px;
+    border: none;
+}
+
+
+button.btn{
+    background-color: #B4B4B4;
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+}
+button.btn i {
+    color: black;
+    font-size: 20px;
+}
+
+.addon-card { 
+    width: 200px;
+    margin-bottom: 15px;
+}
+
+.vertical-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 25px;
+  }
+.vertical-center button {
+    margin-right: 15px;
+}
+.addon-card {
+    width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    border: 2.5px solid rgba(102, 100, 100, 0.5) !important;
+    background-color: rgba(0, 0, 0, .5) !important;
+}
+.addon-img {
+    display: inline-block;
+    vertical-align: top;
+    width: 15%;
+}
+.addon-text {
+    display: inline-block;
+    width: 46%;
+    margin-left: 10px;
+    margin-right: auto;
+}
+.addon-text p#author{
+    margin: 0;
+    font-size: 12px;
+    color: #55FF55;
+    margin-bottom: 5px;
+}
+.addon-text p#description{
+    margin: 0;
+    font-size: 12px;
+    color: #AAAAAA;
+}
+.addon-text h2{
+    margin: 0;
+    margin-top: 5px;
+}
+@media (max-width: 620px) {
+    .container__text {
+        width: 100%;
+   }
+}
+
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border-bottom: 3px solid rgba(0, 0, 0, .5) !important;;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+  /* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    background-color: rgba(0, 0, 0, .5) !important;
+    color: #AAAAAA;
+}
+  
+  
+  
+  /* Change background color of buttons on hover */
+.tab button:hover{
+    background-color: rgba(102, 100, 100, 0.5) !important;
+}
+  
+  /* Create an active/current tablink class */
+.tab button.active {
+    color: white !important;
+    background-color: rgba(59, 58, 58, 0.5) !important;
+}
+  
+  /* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+}
+
+    ::-webkit-scrollbar{
+        width: 9px;
+        height: 9px;
+    }
+    ::-webkit-scrollbar-thumb{
+        background: #C0C0C0;
+        border: 1.4px solid #525252;
+        border-radius: 0px;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+        background: #C7CEFF;
+    }
+    ::-webkit-scrollbar-track{
+        background: #000000;
+        border-radius: 10px;
+        box-shadow: inset -10px -10px 0px -30px #F0F0F0;
+    }
+
+
+.select {
+    position: relative;
+    display: flex;
+    width: 120px;
+    margin-left: 15px;
+}   
+.select select {
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    display: inline-block;
+    width: 100%;
+    cursor: pointer;
+    padding: 10px 15px;
+    outline: 0;
+    border: 0px solid #000000;
+    border-radius: 0px;
+    background: rgba(0, 0, 0, .5);
+    color: #ffffff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+.select select::-ms-expand {
+    display: none;
+}
+.select select:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.select_arrow {
+    position: absolute;
+    top: 17px;
+    right: 15px;
+    pointer-events: none;
+    border-style: solid;
+    border-width: 8px 5px 0px 5px;
+    border-color: #7b7b7b transparent transparent transparent;
+}
+.select select:hover ~ .select_arrow,
+.select select:focus ~ .select_arrow {
+    border-top-color: #7d7c7c;
+}
+.select select:disabled ~ .select_arrow {
+    border-top-color: #cccccc;
+}
+.share{
+    margin-left: 15px;
+}
+@media (max-width: 855px) {
+    .addons .addon-card{
+        max-width: 300px;
+        font-size: 10px;
+    }
+    .addons .addon-card #icon{
+        width: 64px;
+        height: 64px;
+
+    }
+    .addons .addon-card .img{
+        display: flex;
+        align-items: center;
+    }
+    .addons .download{
+        width: 25px;
+        height: 25px;
+    }
+    .addons .download i{
+        font-size: 10px !important;
+    }
+    .addon-text p#name{
+        font-size: 9px;
+      
+    }
+    .addon-text p#author{
+        font-size: 8px;
+      
+    }
+    .addon-text p#description{
+        font-size: 8px;
+        
+    }
+    .addon-text {
+        width: 59%;
+    }
+    .vertical-center {
+        margin-right: 3px;
+    }
+    .vertical-center button {
+        margin-right: 3px;
+    }
+    .search{
+        width: 50%;
+    }
+}
