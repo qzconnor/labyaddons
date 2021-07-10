@@ -116,7 +116,7 @@ $(window).ready( async() => {
         var addonResult = {};
         for (var property in object) {
             if (object.hasOwnProperty(property) && 
-               property.toString().startsWith(str)) {
+               property.toLowerCase().toString().startsWith(str.toLowerCase())) {
                addonResult[property] = object[property];
             }
         }

@@ -28,7 +28,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 35px;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 80vh;
 }
 .wrapper-addon .left{
