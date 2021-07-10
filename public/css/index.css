@@ -2,6 +2,10 @@
     font-family: Minecraft;
     src: url(../fonts/minecraft.woff2) format('woff2');
 }
+
+:root{
+    --data-offset: 0;
+}
 body {
     background-image: url(../images/bg.png);
 }
@@ -226,6 +230,46 @@ button.btn i {
 }
 .share{
     margin-left: 15px;
+}
+.slideIn{
+    animation-name: slideInAnimation;
+}
+.slideOut{
+    animation-name: slideoutAnimation;
+}
+#message{
+    position: absolute;
+    right: 0;
+    top: 0;
+    /*animation: slideInOutAnimation 1s ease;*/
+
+}
+#message .bg{
+    width: 350px;
+}
+#message .content{
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    position: absolute;
+    left: 14px;
+    top: 14px;
+}
+#message .content #description{
+    font-size: 14px;
+    margin-top: 5px;
+}
+.hidden{
+    display: none;
+}
+@keyframes slideInOutAnimation {
+    0%, 10% {
+        top: -70px;
+    }
+    50%,60% {
+        top: 0px;
+    }
+    90%,100% {
+        top: -70px;
+    }
 }
 @media (max-width: 855px) {
     .addons .addon-card{

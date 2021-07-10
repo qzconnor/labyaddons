@@ -10,7 +10,20 @@ var searchObj = {
 };
 var tab = "offical";
 var beforTab = tab;
-var v = "18";
+
+var tabs = {
+    "offical": {
+        "v": "18",
+        "search": ""
+    },
+    "inoffical": {
+        "v": "18",
+        "search": ""
+    }
+}
+
+
+
 $(window).ready( async() => { 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -19,10 +32,11 @@ $(window).ready( async() => {
         tab = params.tab;
     }
     if(params.v){
-        v = params.v;
-        $(`#${tab}-version`).val(v);
+        tabs[tab].v = params.v
     }
-    await fetch(v); 
+
+    await fetchAddons(tabs[tab].v); 
+    $(`#${tab}-version`).val(tabs[tab].v);
     document.getElementById(tab).click();
     if(params.search && params.search !== ""){
         var search = params.search;
@@ -38,12 +52,14 @@ $(window).ready( async() => {
     })
     
     $('#inoffical-version').on('change', async (e)=>{
-        await fetch(e.target.value);  
+        await fetchAddons(e.target.value);  
+        tabs[tab].v = e.target.value;
         searchAddons($(`#${tab}-search`).val());
         changeURL()
     })
     $('#offical-version').on('change', async (e)=>{
-        await fetch(e.target.value);  
+        await fetchAddons(e.target.value);  
+        tabs[tab].v = e.target.value;
         searchAddons($(`#${tab}-search`).val());
         changeURL()
     })
@@ -52,6 +68,11 @@ $(window).ready( async() => {
         changeURL()
     })
     
+    $(".tablinks").click(async () => {
+        await fetchAddons(tabs[tab].v);  
+        changeURL()
+    })
+
     function searchAddons(q){
         if(q === ""){
             searchObj["show-" + tab] = searchObj[tab];
@@ -61,12 +82,6 @@ $(window).ready( async() => {
             drawAddons(tab + "-addons",searchObj["show-" + tab]);
         }
     }
-
-    $(".tablinks").click(async () => {
-        await fetch(v);  
-        changeURL()
-    })
-    
     function drawAddons(where,object){
         var w =  document.getElementById(where);
         removeAllChildNodes(w)
@@ -108,7 +123,7 @@ $(window).ready( async() => {
         return addonResult
     }
     
-    async function fetch(version) {
+    async function fetchAddons(version) {
         searchObj["offical"] = {};
         searchObj["inoffical"] = {};
         searchObj["show-offical"] = {};
@@ -146,7 +161,6 @@ $(window).ready( async() => {
 
 })
 
-
 function removeAllChildNodes(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
@@ -172,7 +186,16 @@ function openTab(evt, cityName) {
 function changeURL(){
     var searchVal = $(`#${tab}-search`).val();
     var version = $(`#${tab}-version`).val();
-    changeQueryString(`?search=${searchVal}&tab=${tab}&v=${version}`,undefined);
+    var q = "?"
+    if(searchVal !== ""){
+        q += `search=${searchVal}`
+        q += `&tab=${tab}`;
+    }else{
+        q += `tab=${tab}`;
+    }
+
+    q += `&v=${version}`;
+    changeQueryString(q,undefined);
 }
 function changeQueryString(searchString, documentTitle){      
     documentTitle = typeof documentTitle !== 'undefined' ? documentTitle : document.title;      
@@ -184,42 +207,4 @@ function changeQueryString(searchString, documentTitle){
 function download(el){
     window.open(el.getAttribute('data-url'), "_blank");
 }
-function share(){
-    copyTextToClipboard(window.location.href)
-}
 
-
-function fallbackCopyTextToClipboard(text) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text;
-    
-    // Avoid scrolling to bottom
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-  
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-  
-    try {
-      var successful = document.execCommand('copy');
-      var msg = successful ? 'successful' : 'unsuccessful';
-      console.log('Fallback: Copying text command was ' + msg);
-    } catch (err) {
-      console.error('Fallback: Oops, unable to copy', err);
-    }
-  
-    document.body.removeChild(textArea);
-  }
-  function copyTextToClipboard(text) {
-    if (!navigator.clipboard) {
-      fallbackCopyTextToClipboard(text);
-      return;
-    }
-    navigator.clipboard.writeText(text).then(function() {
-      console.log('Async: Copying to clipboard was successful!');
-    }, function(err) {
-      console.error('Async: Could not copy text: ', err);
-    });
-  }
