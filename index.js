@@ -36,7 +36,16 @@ app.get("/", async (req, res) => {
         title: req.hostname + " - Showup"
     });
 })
-
+app.get("/imprint", async (req, res) => {
+    res.render('imprint',{
+        title: req.hostname + " - Imprint"
+    });
+})
+app.get("/privacy", async (req, res) => {
+    res.render('privacy',{
+        title: req.hostname + " - Privacy Policy"
+    });
+})
 app.post("/api/upload", async (req, res) => {
 })
 

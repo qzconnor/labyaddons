@@ -6,13 +6,6 @@
 :root{
     --data-offset: 0;
 }
-body {
-    background-image: url(../images/bg.png);
-}
-* {
-    color: white;
-    margin: 0;
-}
 [type="text"]{
     background-color: rgba(0, 0, 0, .5) !important;
     padding: 8px 8px 4px 8px !important;
@@ -237,6 +230,9 @@ button.btn i {
 .slideOut{
     animation-name: slideoutAnimation;
 }
+.addons{
+    width: 855px;
+}
 #message{
     position: absolute;
     right: 0;
@@ -259,6 +255,13 @@ button.btn i {
 }
 .hidden{
     display: none;
+}
+
+#links{
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    position: absolute;
+    left: 17px;
+    bottom: 17px;
 }
 @keyframes slideInOutAnimation {
     0%, 10% {
