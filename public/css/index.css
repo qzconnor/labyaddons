@@ -165,14 +165,14 @@ button.btn i {
     ::-webkit-scrollbar-thumb{
         background: #C0C0C0;
         border: 1.4px solid #525252;
-        border-radius: 0px;
+        border-radius: 0;
     }
     ::-webkit-scrollbar-thumb:hover{
         background: #C7CEFF;
     }
     ::-webkit-scrollbar-track{
         background: #000000;
-        border-radius: 10px;
+        border-radius: 0;
         box-shadow: inset -10px -10px 0px -30px #F0F0F0;
     }
 
