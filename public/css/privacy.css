@@ -16,3 +16,11 @@
     top: 15px;
     left: 15px;
 }
+@media (max-width: 855px) {
+    .title img{
+        width: 350px;
+    }
+    .title{
+        margin-top: 85px;
+    }
+}
