@@ -131,6 +131,7 @@ $(window).ready( async() => {
         var data = await $.getJSON( "./static/addons.json");
 
         var time = document.getElementsByClassName('lastfetch');
+        console.log(format_time(data.time))
         for(var i=0; i < time.length; i++) {
             time[i].innerHTML ="Last fetch: " + '<span style="color:#55FF55">' + format_time(data.time) + '</span>';
         }
@@ -166,7 +167,7 @@ $(window).ready( async() => {
 function format_time(s) {
     const milliseconds = s * 1000;
     const dateObject = new Date(milliseconds);
-    return dateObject.getHours() + ":" + dateObject.getMinutes();
+    return (dateObject.getHours() < 10 ? '0' + dateObject.getHours() : dateObject.getHours()) + ":" + (dateObject.getMinutes() < 10 ? '0' + dateObject.getMinutes() : dateObject.getMinutes());
 }
 
 function removeAllChildNodes(parent) {
