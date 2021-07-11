@@ -1,0 +1,18 @@
+#content{
+    margin: 15px;
+    font-family: Arial, Helvetica, sans-serif !important;
+}
+#content h2, #content h3{
+    margin-top: 15px;
+}
+.title{
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 35px;
+}
+.back{
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}

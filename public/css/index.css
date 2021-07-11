@@ -48,18 +48,6 @@
     border: none;
 }
 
-
-button.btn{
-    background-color: #B4B4B4;
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
-}
-button.btn i {
-    color: black;
-    font-size: 20px;
-}
-
 .addon-card { 
     width: 200px;
     margin-bottom: 15px;
