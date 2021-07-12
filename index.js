@@ -13,7 +13,7 @@ const GitHubStrategy = require("passport-github2").Strategy
 var mysql = require('mysql');
 
 var options = {
-	host:  process.env.HOST,
+	host:  process.env.DBHOST,
 	port: process.env.PORT,
 	user: process.env.USER,
 	password: process.env.PASSWORD,
@@ -186,14 +186,57 @@ app.get("/dashboard", ensureAuthenticated, (req, res) => {
 })
 
 
+
 app.get("/api/inoffical", async (req, res) => {
-    res.json({
-        "addons": {
-            "18": [],
-            "112": [],
-            "116": []
-        }
-    })
+    if(connectionSuccess){
+        connection.query("SELECT * FROM inoffical", function (err, result) {
+            if (err) throw err;
+            var addons18 = [];
+            var addons112 = [];
+            var addons116 = [];
+            for(var addon of result){
+                if(addon.version == 18){
+                    addons18.push({
+                        "name": addon.name,
+                        "uuid": addon.uuid,
+                        "uploadedAt": addon.uploadedAt,
+                        "status": addon.status,
+                        "author": addon.author,
+                        "description": addon.description,
+                        "dl": addon.dl
+                    })
+                }else if(addon.version == 112){
+                    addons112.push({
+                        "name": addon.name,
+                        "uuid": addon.uuid,
+                        "uploadedAt": addon.uploadedAt,
+                        "status": addon.status,
+                        "author": addon.author,
+                        "description": addon.description,
+                        "dl": addon.dl
+                    })
+                }else if(addon.version == 116){
+                    addons116.push({
+                        "name": addon.name,
+                        "uuid": addon.uuid,
+                        "uploadedAt": addon.uploadedAt,
+                        "status": addon.status,
+                        "author": addon.author,
+                        "description": addon.description,
+                        "dl": addon.dl
+                    })
+                }
+             
+            }
+            res.json({
+                "addons": {
+                    "18": addons18,
+                    "112": addons112,
+                    "116": addons116
+                }
+            })
+        });
+    }
 })
 app.listen(SERVER_PORT, ()=>{
     console.log(`Server listening on port: ${SERVER_PORT}.`);
