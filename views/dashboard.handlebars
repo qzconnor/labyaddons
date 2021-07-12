@@ -1,0 +1,17 @@
+<link rel="stylesheet" href="./static/css/btn.css">
+<link rel="stylesheet" href="./static/css/dashboard.css">
+
+	{{#if user}}
+		<div class="user-area">
+			<div class="bg">
+				<span class="link"><a href="dashboard">Dashboard</a></span>
+				<span class="username">{{user.displayName}}</span>
+				<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
+			</div>
+			<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
+		</div>
+		{{else}}
+		<div class="login-btn">
+			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
+		</div>
+	{{/if}}

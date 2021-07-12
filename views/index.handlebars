@@ -18,9 +18,14 @@
 
 	{{#if user}}
 		<div class="user-area">
-			<span class="link"><a href="dashboard">Dashboard</a></span>
-			<span class="username">{{user.displayName}}</span>
-			<img src="{{photo}}" alt="{{user.displayName}}">
+			<div class="bg">
+				{{#each tabs}}
+					<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
+				{{/each}}
+				<span class="username">{{user.displayName}}</span>
+				<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
+			</div>
+			<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
 		</div>
 		{{else}}
 		<div class="login-btn">

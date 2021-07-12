@@ -10,20 +10,44 @@ const passport = require("passport")
 const session = require("express-session")
 const MySQLStore = require('express-mysql-session')(session);
 const GitHubStrategy = require("passport-github2").Strategy
+var mysql = require('mysql');
 
 var options = {
 	host: 'localhost',
 	port: 3306,
 	user: 'root',
 	password: '',
-	database: 'session'
+	database: 'addons'
 };
+
+const connection = mysql.createConnection(options);
+let connectionSuccess = false;
+connection.connect(function(err) {
+    if (err) {
+      connectionSuccess = false;
+      return;
+    }
+    connectionSuccess = true;
+  });
+
+
+const TABS = [
+    {
+        text: 'Dashboard',
+        link: 'dashboard',
+        allowed: []
+    },
+    {
+        text: 'Team',
+        link: 'team',
+        allowed: [50, 100]
+    }
+]
 
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
-
 
 passport.serializeUser(function(user, done) {
     done(null, user)
@@ -32,34 +56,21 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj)
 })
 
-//mongoose.connect('mongodb://localhost/labyaddons', {
-//  useNewUrlParser: true,
-//  useUnifiedTopology: true,
-//  useFindAndModify: false,
-//  useCreateIndex: true
-//});
-
-
 passport.use(
-new GitHubStrategy(
-    {
-    clientID: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_CLIENT_SECRET,
-    callbackURL: GITHUB_CALLBACK_URL
-    },
-    function(accessToken, refreshToken, profile, done) {
+new GitHubStrategy({
+        clientID: GITHUB_CLIENT_ID,
+        clientSecret: GITHUB_CLIENT_SECRET,
+        callbackURL: GITHUB_CALLBACK_URL
+    },(accessToken, refreshToken, profile, done)=> {
         return done(null, profile)
-    }
+    })
 )
-)
-//var AccessToken = require('./models/AccessToken')
 
 app.use(bodyParser.json());
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.use('/static', express.static('public'));
 app.use(bodyParser.urlencoded({extended: true})); 
-
 
 app.use(
     session({ 
@@ -75,14 +86,33 @@ app.use(
   app.use(passport.initialize())
   app.use(passport.session())
 
-
+  app.use((req, res, next) => {
+    if(connectionSuccess && req.session.passport){
+        var githubID = req.session.passport.user.id;
+        connection.query("SELECT * FROM `team` WHERE githubID = " + githubID, (error, results, fields) => { // 46536197
+            if (error){
+                console.error(error)
+            };
+            var rank = 1;
+            var rankName = ""
+            if(results.length > 0){
+                rank = results[0].rank;
+                rankName = results[0].teamStatus;
+            }
+            req.session.rank = rank;
+            req.session.rankName = rankName;
+        })
+    }
+    next();
+  });
 app.get("/", async (req, res) => {
-
+    console.log(req.session.rank)
     if(req.session.passport){
         res.render('index',{
             title: req.hostname + " - Showup",
             user: req.session.passport.user,
-            photo: req.session.passport.user.photos[0].value
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
         });
     }else{
         res.render('index',{
@@ -135,11 +165,24 @@ app.get("/auth/github/callback",
     }
   )
 
-
-app.get("/dashboard", ensureAuthenticated, (req, res) => {
-    res.render('dashboard',{
+app.get("/team", ensureAuthenticated, (req, res) => {
+    res.render('team',{
         title: req.hostname + " - Dashboard"
     });
+});
+
+app.get("/dashboard", ensureAuthenticated, (req, res) => {
+    if(req.session.passport){
+        res.render('dashboard',{
+            title: req.hostname + " - Dashboard",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value
+        });
+    }else{
+        res.render('dashboard',{
+            title: req.hostname + " - Dashboard"
+        });
+    }
 })
 
 
@@ -166,12 +209,42 @@ app.listen(SERVER_PORT, ()=>{
 
 
 
-
-
-
 function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
+    var path = req.originalUrl.replace("/", "");
+    var allowed = isAllowed(path, req.session.rank);
+    if (req.isAuthenticated() && allowed) {
       return next()
     }
+
     res.redirect("/")
   }
+function isAllowed(tab, rank){
+    var allowed = false;
+    for(var t of TABS){
+        if(t.link === tab){
+            if(t.allowed.length > 0){
+                if(t.allowed.includes(rank)){
+                    allowed = true;
+                }
+            }else{
+                allowed = true;
+            }
+        }
+    }
+    return allowed;
+}
+
+function proccessTabs(tabs, rank){
+    var visableTABS = [];
+    for(var tab of tabs){
+        if(tab.allowed.length > 0){
+            if(tab.allowed.includes(rank)){
+                visableTABS.push(tab)
+            }
+        }else{
+              visableTABS.push(tab)
+        }
+
+    }
+    return visableTABS;
+}
