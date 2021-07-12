@@ -6,12 +6,18 @@ const express = require('express');
 const exphbs = require("express-handlebars");
 const app = express();
 const bodyParser = require("body-parser");
-const mongoose = require('mongoose');
-
 const passport = require("passport")
 const session = require("express-session")
-const MongoStore = require("connect-mongo");
+const MySQLStore = require('express-mysql-session')(session);
 const GitHubStrategy = require("passport-github2").Strategy
+
+var options = {
+	host: 'localhost',
+	port: 3306,
+	user: 'root',
+	password: '',
+	database: 'session'
+};
 
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
@@ -26,12 +32,12 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj)
 })
 
-mongoose.connect('mongodb://localhost/labyaddons', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true
-});
+//mongoose.connect('mongodb://localhost/labyaddons', {
+//  useNewUrlParser: true,
+//  useUnifiedTopology: true,
+//  useFindAndModify: false,
+//  useCreateIndex: true
+//});
 
 
 passport.use(
@@ -42,22 +48,6 @@ new GitHubStrategy(
     callbackURL: GITHUB_CALLBACK_URL
     },
     function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    console.log({ accessToken, refreshToken, profile })
-    
-
-    
-
-    // an example of how you might save a user
-    // new User({ username: profile.username }).fetch().then(user => {
-    //   if (!user) {
-    //     user = User.forge({ username: profile.username })
-    //   }
-    // 
-    //   user.save({ profile: profile, access_token: accessToken }).then(() => {
-    //     return done(null, user)
-    //   })
-    // })
         return done(null, profile)
     }
 )
@@ -74,12 +64,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(
     session({ 
         secret: "%1(mBk3E9^JW8xA", 
-        resave: true,
-        saveUninitialized: true,
-        store: MongoStore.create({ 
-            mongoUrl: "mongodb://localhost/labyaddons",
-            dbName: 'sessions'
-        }),
+        resave: false,
+        saveUninitialized: false,
+        store: new MySQLStore(options),
         cookie: {
             secure: app.get("env") === "production",
         }
