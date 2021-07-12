@@ -13,11 +13,11 @@ const GitHubStrategy = require("passport-github2").Strategy
 var mysql = require('mysql');
 
 var options = {
-	host: 'localhost',
-	port: 3306,
-	user: 'root',
-	password: '',
-	database: 'addons'
+	host:  process.env.HOST,
+	port: process.env.PORT,
+	user: process.env.USER,
+	password: process.env.PASSWORD,
+	database:  process.env.DATABASE
 };
 
 const connection = mysql.createConnection(options);
