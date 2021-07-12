@@ -1,10 +1,16 @@
 <link rel="stylesheet" href="./static/css/btn.css">
 <link rel="stylesheet" href="./static/css/dashboard.css">
 
-	{{#if user}}
+<div class="back">
+    <button class="btn back" id="back"><i class="fas fa-arrow-left"></i></button>	
+</div>
+
+{{#if user}}
 		<div class="user-area">
 			<div class="bg">
-				<span class="link"><a href="dashboard">Dashboard</a></span>
+				{{#each tabs}}
+					<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
+				{{/each}}
 				<span class="username">{{user.displayName}}</span>
 				<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
 			</div>
@@ -15,3 +21,9 @@
 			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
 		</div>
 	{{/if}}
+
+<script type="text/javascript">
+    document.getElementById("back").onclick = function () {
+        location.href = "/";
+    };
+</script>

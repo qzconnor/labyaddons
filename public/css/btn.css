@@ -54,3 +54,8 @@ button.btn i {
     width: 100%;
     border-radius: 50%;
 }
+.back{
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}

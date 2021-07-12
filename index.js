@@ -10,15 +10,16 @@ const passport = require("passport")
 const session = require("express-session")
 const MySQLStore = require('express-mysql-session')(session);
 const GitHubStrategy = require("passport-github2").Strategy
+
 var mysql = require('mysql');
 
-var options = {
-	host:  process.env.DBHOST,
-	port: process.env.PORT,
-	user: process.env.USER,
-	password: process.env.PASSWORD,
-	database:  process.env.DATABASE
-};
+const options = {
+    host:  process.env.DBHOST,
+    port: process.env.PORT,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database:  process.env.DATABASE
+}
 
 const connection = mysql.createConnection(options);
 let connectionSuccess = false;
@@ -28,8 +29,7 @@ connection.connect(function(err) {
       return;
     }
     connectionSuccess = true;
-  });
-
+});
 
 const TABS = [
     {
@@ -41,6 +41,11 @@ const TABS = [
         text: 'Team',
         link: 'team',
         allowed: [50, 100]
+    },
+    {
+        text: 'Admin',
+        link: 'admin',
+        allowed: [100]
     }
 ]
 
@@ -99,14 +104,18 @@ app.use(
                 rank = results[0].rank;
                 rankName = results[0].teamStatus;
             }
-            req.session.rank = rank;
-            req.session.rankName = rankName;
+            if(req.session){
+                req.session.rank = rank;
+                req.session.rankName = rankName;
+            }
+           
         })
     }
     next();
   });
+
+
 app.get("/", async (req, res) => {
-    console.log(req.session.rank)
     if(req.session.passport){
         res.render('index',{
             title: req.hostname + " - Showup",
@@ -137,12 +146,8 @@ app.get("/privacy", async (req, res) => {
 })
 
 
-app.post("/api/upload", async (req, res) => {
-})
 
-
-app.get("/auth/github",
-    passport.authenticate("github", { scope: ["repo:status"] }), /// Note the scope here
+app.get("/auth/github",passport.authenticate("github", { scope: ["repo:status"] }), /// Note the scope here
     function(req, res) { }
 )
 
@@ -152,31 +157,97 @@ app.get('/logout', (req, res) => {
         if (err) {
           res.status(400).send('Unable to log out')
         }
-        res.end()
       });
     }  
     res.redirect("/")
   })
 
 app.get("/auth/github/callback",
+
     passport.authenticate("github", { failureRedirect: "/" }),
     function(req, res) {
-      res.redirect("/")
+        var githubID = req.session.passport.user.id;
+        var username = req.session.passport.user.username;
+        var user = { 
+            githubID: githubID,
+            rank: 1,
+            githubName: username,
+            profileImageUrl: req.session.passport.user.photos[0].value
+        }
+        connection.query(`INSERT IGNORE INTO team SET ?`,user,function (error, results, fields) {
+            if (error) {
+                console.error(error)
+            };
+            // Neat!
+        });
+        res.redirect("/")
     }
   )
 
 app.get("/team", ensureAuthenticated, (req, res) => {
-    res.render('team',{
-        title: req.hostname + " - Dashboard"
-    });
+    if(req.session.passport){
+        res.render('team',{
+            title: req.hostname + " - Team",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
+        });
+    }else{
+        res.render('team',{
+            title: req.hostname + " - Team"
+        });
+    }
 });
+app.get("/admin", ensureAuthenticated, (req, res) => {
+    if(req.session.passport){
+        res.render('admin',{
+            title: req.hostname + " - Admin",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
+        });
+    }else{
+        res.render('admin',{
+            title: req.hostname + " - Admin"
+        });
+    }
+});
+
+app.get("/api/users", (req, res) => {
+    var session = req.session;
+   if(session && session.rank === 100){
+    var users = [];
+    connection.query("SELECT * FROM `team`", (error, results, fields) => { // 46536197
+        if (error){
+            console.error(error)
+        };
+        for(var result of results){
+            users.push(result);
+        }
+        res.status(200).send({
+            "status": 200,
+            "data": users
+       })
+    });
+
+
+     
+   }else{
+    res.status(403).send({
+        "status": 403,
+        "message": "No Perms"
+    })
+   }
+});
+
 
 app.get("/dashboard", ensureAuthenticated, (req, res) => {
     if(req.session.passport){
         res.render('dashboard',{
             title: req.hostname + " - Dashboard",
             user: req.session.passport.user,
-            photo: req.session.passport.user.photos[0].value
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
         });
     }else{
         res.render('dashboard',{
@@ -238,6 +309,11 @@ app.get("/api/inoffical", async (req, res) => {
         });
     }
 })
+
+app.get('*',function(req,res){
+    res.redirect('/');
+   });
+
 app.listen(SERVER_PORT, ()=>{
     console.log(`Server listening on port: ${SERVER_PORT}.`);
     console.log(`SITE: http://localhost:${SERVER_PORT}`);
