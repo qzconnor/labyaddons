@@ -16,6 +16,18 @@
 		</div>
 </div>
 
+	{{#if user}}
+		<div class="user-area">
+			<span class="link"><a href="dashboard">Dashboard</a></span>
+			<span class="username">{{user.displayName}}</span>
+			<img src="{{photo}}" alt="{{user.displayName}}">
+		</div>
+		{{else}}
+		<div class="login-btn">
+			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
+		</div>
+	{{/if}}
+
 <div class="wrapper-addon">
 	<div class="wrapper">
 		<div class="tab">
@@ -86,6 +98,12 @@
 		<button class="btn download" id="download" onclick="download(this);"><i class="fas fa-download"></i></button>
 	</div>
 </template>
+
+<script type="text/javascript">
+    function redirect(url){
+ 		location.href = url;
+	}
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="./static/js/app.js"></script>

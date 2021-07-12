@@ -1,7 +1,4 @@
-@font-face {
-    font-family: Minecraft;
-    src: url(../fonts/minecraft.woff2) format('woff2');
-}
+
 
 :root{
     --data-offset: 0;
@@ -224,6 +221,7 @@
     position: absolute;
     right: 0;
     top: 0;
+    z-index: 999;
     /*animation: slideInOutAnimation 1s ease;*/
 
 }
