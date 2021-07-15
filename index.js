@@ -97,17 +97,17 @@ app.use(
 
   app.use((req, res, next) => {
     if(maintenance.state && req.hostname != "localhost"){
-        if(!maintenance.allowedIps.includes(req.ip)){
+        let ip = (req.headers['x-forwarded-for'] || '').split(',')[0];
+        if(!maintenance.allowedIps.includes(ip)){
             res.render('maintenance',{
                 title: req.hostname + " - Maintenance",
-                requestIP: req.ip
+                requestIP: ip
             })
-        }else{
-            next();
         }
+        next();
        
-    }else{
-  if(connectionSuccess && req.session.passport){
+    }
+    if(connectionSuccess && req.session.passport){
         var githubID = req.session.passport.user.id;
         connection.query("SELECT * FROM `team` WHERE githubID = " + githubID, (error, results, fields) => { // 46536197
             if (error){
@@ -127,8 +127,6 @@ app.use(
         })
     }
     next();
-    }
-  
   });
 
 
