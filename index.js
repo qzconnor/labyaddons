@@ -49,6 +49,10 @@ const TABS = [
     }
 ]
 
+const maintenance = {
+    "state": true,
+    "allowedIps": []
+}
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -92,7 +96,18 @@ app.use(
   app.use(passport.session())
 
   app.use((req, res, next) => {
-    if(connectionSuccess && req.session.passport){
+    if(maintenance.state && req.hostname != "localhost"){
+        if(!maintenance.allowedIps.includes(req.ip)){
+            res.render('maintenance',{
+                title: req.hostname + " - Maintenance",
+                requestIP: req.ip
+            })
+        }else{
+            next();
+        }
+       
+    }else{
+  if(connectionSuccess && req.session.passport){
         var githubID = req.session.passport.user.id;
         connection.query("SELECT * FROM `team` WHERE githubID = " + githubID, (error, results, fields) => { // 46536197
             if (error){
@@ -112,6 +127,8 @@ app.use(
         })
     }
     next();
+    }
+  
   });
 
 
@@ -147,7 +164,7 @@ app.get("/privacy", async (req, res) => {
 
 
 
-app.get("/auth/github",passport.authenticate("github", { scope: ["repo:status"] }), /// Note the scope here
+app.get("/auth/github",passport.authenticate("github", { scope: ["repo"] }), /// Note the scope here
     function(req, res) { }
 )
 
@@ -174,11 +191,10 @@ app.get("/auth/github/callback",
             githubName: username,
             profileImageUrl: req.session.passport.user.photos[0].value
         }
-        connection.query(`INSERT IGNORE INTO team SET ?`,user,function (error, results, fields) {
+        connection.query(`INSERT IGNORE INTO team SET ?`,user , (error, results, fields) => {
             if (error) {
                 console.error(error)
             };
-            // Neat!
         });
         res.redirect("/")
     }
@@ -312,7 +328,7 @@ app.get("/api/inoffical", async (req, res) => {
 
 app.get('*',function(req,res){
     res.redirect('/');
-   });
+});
 
 app.listen(SERVER_PORT, ()=>{
     console.log(`Server listening on port: ${SERVER_PORT}.`);
