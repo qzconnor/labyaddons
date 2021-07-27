@@ -48,7 +48,18 @@
     width: 200px;
     margin-bottom: 15px;
 }
-
+.addon-card .name-wrap{
+    margin-top: 5px;
+}
+.addon-card .name-wrap h2{
+    display: inline;
+}
+.addon-card .name-wrap[data-verified="true"] i,.addon-card .name-wrap[data-verified="true"] #name{
+    color:#FFFF55;
+}
+.addon-card .name-wrap[data-verified="false"] .verified-badge{
+    display: none;
+}
 .vertical-center {
     display: flex;
     justify-content: center;

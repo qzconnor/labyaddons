@@ -35,6 +35,7 @@
 			<!-- Tab content -->
 			<div data-to="offical" id="store_offical" class="tabcontent">
 					<div class="center">
+						<!--<input type="checkbox" id="offical-only" checked="false">-->
 						<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
 						<div class="select">
 						<select id="offical-version">
@@ -55,6 +56,7 @@
 			</div>
 			<div data-to="inoffical" id="store_inoffical" class="tabcontent">
 					<div class="center">
+						<!--<input type="checkbox" id="inoffical-only" checked="false">-->
 						<input type="text" autocomplete="off" id="inoffical-search" class="search" placeholder="Search..."/>
 						<div class="select">
 							<select id="inoffical-version">
@@ -88,7 +90,11 @@
 	<div class="addon-card">
 	<img id="icon" src="#" alt="NAME" class="addon-img">
 	<div class="addon-text">
-		<h2 id="name">ADDON NAME</h2>
+		<div class="name-wrap" id="name-wrap" data-verified="true">
+			<h2 id="name">ADDON NAME</h2>
+			<span class="verified-badge"><i class="fas fa-star"></i></span>
+		</div>
+		
 		<p id="author">ADDON AUTHOR</p>
 		<p id="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate incidunt recusandae at? Est odit suscipit consequuntur? Dignissimos aut assumenda tempore, a perspiciatis odit quas voluptatum optio dicta, ex tempora doloremque.</p>
 	</div>  

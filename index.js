@@ -292,7 +292,8 @@ app.get("/api/inoffical", async (req, res) => {
                     "status": addon.status,
                     "author": addon.author,
                     "description": addon.description,
-                    "dl": addon.dl
+                    "dl": addon.dl,
+                    "verified": false
                 })
             }
             res.json({
@@ -320,7 +321,8 @@ app.get("/api/offical", async (req, res) => {
                 "uuid": a.uuid,
                 "author": a.author,
                 "description": a.description,
-                "dl": `https://dl.labymod.net/latest/addons/${a.uuid}/icon.png`
+                "dl": `https://dl.labymod.net/latest/addons/${a.uuid}/icon.png`,
+                "verified": a.verified
             })
         }
     }
