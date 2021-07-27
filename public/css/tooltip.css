@@ -2,6 +2,7 @@
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted #090136;
+    z-index: 999;
   }
   
   .tooltip .tooltiptext {
@@ -14,13 +15,14 @@
     padding: 5px 0;
     position: absolute;
     z-index: 1;
-    bottom: 125%;
+    bottom: -285%;
     left: 50%;
     margin-left: -60px;
     opacity: 0;
     transition: opacity 0.3s;
     color: #FFFF55;
     border: 2px solid #090136;
+    z-index: 999;
   }
   
   .tooltip .tooltiptext::after {
