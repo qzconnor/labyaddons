@@ -12,6 +12,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const GitHubStrategy = require("passport-github2").Strategy
 
 var mysql = require('mysql');
+const f = require('session-file-store');
 
 const options = {
     host:  process.env.DBHOST,
@@ -53,7 +54,7 @@ const maintenance = {
     "state": false,
     "allowedIps": []
 }
-
+const loginBtn = false;
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
@@ -136,7 +137,8 @@ app.get("/", async (req, res) => {
             title: req.hostname + " - Showup",
             user: req.session.passport.user,
             photo: req.session.passport.user.photos[0].value,
-            tabs: proccessTabs(TABS,req.session.rank)
+            tabs: proccessTabs(TABS,req.session.rank),
+            loginBtn: loginBtn
         });
     }else{
         res.render('index',{

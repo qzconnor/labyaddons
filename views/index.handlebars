@@ -21,9 +21,11 @@
 			<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
 		</div>
 		{{else}}
+			{{#if loginBtn}}
 		<div class="login-btn">
 			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
 		</div>
+			{{/if}}
 	{{/if}}
 
 <div class="wrapper-addon">
