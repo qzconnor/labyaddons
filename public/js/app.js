@@ -128,10 +128,9 @@ $(window).ready( async() => {
         searchObj["inoffical"] = {};
         searchObj["show-offical"] = {};
         searchObj["show-inoffical"] = {};
-        var data = await $.getJSON( "./static/addons.json");
-
+        var data = await $.getJSON( "./api/offical");
+        console.log(data)
         var time = document.getElementsByClassName('lastfetch');
-        console.log(format_time(data.time))
         for(var i=0; i < time.length; i++) {
             time[i].innerHTML ="Last fetch: " + '<span style="color:#55FF55">' + format_time(data.time) + '</span>';
         }

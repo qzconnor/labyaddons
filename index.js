@@ -50,7 +50,7 @@ const TABS = [
 ]
 
 const maintenance = {
-    "state": true,
+    "state": false,
     "allowedIps": []
 }
 
@@ -143,10 +143,6 @@ app.get("/", async (req, res) => {
             title: req.hostname + " - Showup"
         });
     }
-    
-   
-
-    //console.log(data);
 
 })
 app.get("/imprint", async (req, res) => {
@@ -189,11 +185,14 @@ app.get("/auth/github/callback",
             githubName: username,
             profileImageUrl: req.session.passport.user.photos[0].value
         }
-        connection.query(`INSERT IGNORE INTO team SET ?`,user , (error, results, fields) => {
-            if (error) {
-                console.error(error)
-            };
-        });
+        if(connectionSuccess){
+            connection.query(`INSERT IGNORE INTO team SET ?`,user , (error, results, fields) => {
+                if (error) {
+                    console.error(error)
+                };
+            });
+        }
+       
         res.redirect("/")
     }
   )
@@ -231,18 +230,22 @@ app.get("/api/users", (req, res) => {
     var session = req.session;
    if(session && session.rank === 100){
     var users = [];
-    connection.query("SELECT * FROM `team`", (error, results, fields) => { // 46536197
-        if (error){
-            console.error(error)
-        };
-        for(var result of results){
-            users.push(result);
-        }
-        res.status(200).send({
-            "status": 200,
-            "data": users
-       })
-    });
+
+    if(connectionSuccess){
+        connection.query("SELECT * FROM `team`", (error, results, fields) => { // 46536197
+            if (error){
+                console.error(error)
+            };
+            for(var result of results){
+                users.push(result);
+            }
+            res.status(200).send({
+                "status": 200,
+                "data": users
+           })
+        });
+    }
+
 
 
      
@@ -276,52 +279,59 @@ app.get("/api/inoffical", async (req, res) => {
     if(connectionSuccess){
         connection.query("SELECT * FROM inoffical", function (err, result) {
             if (err) throw err;
-            var addons18 = [];
-            var addons112 = [];
-            var addons116 = [];
+            var addons = {
+                "18": [],
+                "112": [],
+                "116": []
+            }
             for(var addon of result){
-                if(addon.version == 18){
-                    addons18.push({
-                        "name": addon.name,
-                        "uuid": addon.uuid,
-                        "uploadedAt": addon.uploadedAt,
-                        "status": addon.status,
-                        "author": addon.author,
-                        "description": addon.description,
-                        "dl": addon.dl
-                    })
-                }else if(addon.version == 112){
-                    addons112.push({
-                        "name": addon.name,
-                        "uuid": addon.uuid,
-                        "uploadedAt": addon.uploadedAt,
-                        "status": addon.status,
-                        "author": addon.author,
-                        "description": addon.description,
-                        "dl": addon.dl
-                    })
-                }else if(addon.version == 116){
-                    addons116.push({
-                        "name": addon.name,
-                        "uuid": addon.uuid,
-                        "uploadedAt": addon.uploadedAt,
-                        "status": addon.status,
-                        "author": addon.author,
-                        "description": addon.description,
-                        "dl": addon.dl
-                    })
-                }
-             
+                addons[addon.version + ''].push({
+                    "name": addon.name,
+                    "uuid": addon.uuid,
+                    "uploadedAt": addon.uploadedAt,
+                    "status": addon.status,
+                    "author": addon.author,
+                    "description": addon.description,
+                    "dl": addon.dl
+                })
             }
             res.json({
                 "addons": {
-                    "18": addons18,
-                    "112": addons112,
-                    "116": addons116
+                    "18": addons['18'],
+                    "112": addons['112'],
+                    "116": addons['116']
                 }
             })
         });
     }
+})
+app.get("/api/offical", async (req, res) => {
+    var addons = {
+        "18": [],
+        "112": [],
+        "116": []
+    }
+    var result = require('./public/addons.json')
+    for(var key of Object.keys(result.addons)){
+        var addon = result.addons[key]
+        for(var a of addon){
+            addons[key].push({
+                "name": a.name,
+                "uuid": a.uuid,
+                "author": a.author,
+                "description": a.description,
+                "dl": `https://dl.labymod.net/latest/addons/${a.uuid}/icon.png`
+            })
+        }
+    }
+    res.status(200).json({
+        "time": result.time,
+        "addons": {
+            "18": addons['18'],
+            "112": addons['112'],
+            "116": addons['116']
+        }
+    })
 })
 
 app.get('*',function(req,res){
