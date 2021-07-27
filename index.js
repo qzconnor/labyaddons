@@ -12,7 +12,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const GitHubStrategy = require("passport-github2").Strategy
 
 var mysql = require('mysql');
-const f = require('session-file-store');
+const fs = require('fs');
 
 const options = {
     host:  process.env.DBHOST,
@@ -313,8 +313,10 @@ app.get("/api/offical", async (req, res) => {
         "18": [],
         "112": [],
         "116": []
-    }
-    var result = require('./public/addons.json')
+    }   
+    let rawdata = fs.readFileSync('./public/addons.json');
+    let result = JSON.parse(rawdata);
+
     for(var key of Object.keys(result.addons)){
         var addon = result.addons[key]
         for(var a of addon){

@@ -183,7 +183,7 @@ function removeAllChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
-function openTab(evt, cityName) {
+function openTab(evt, nTab) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -193,10 +193,10 @@ function openTab(evt, cityName) {
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(cityName).style.display = "block";
+    document.getElementById(nTab).style.display = "block";
     evt.currentTarget.className += " active";
     beforTab = tab;
-    tab = cityName.replace("store_", "");
+    tab = nTab.replace("store_", "");
 
 }    
 
