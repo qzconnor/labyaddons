@@ -13,7 +13,8 @@ const GitHubStrategy = require("passport-github2").Strategy
 
 var mysql = require('mysql');
 const fs = require('fs');
-
+const fetch = require('node-fetch');
+var http = require('http');
 const options = {
     host:  process.env.DBHOST,
     port: process.env.PORT,
@@ -129,7 +130,82 @@ app.use(
     }
     next();
   });
+app.get("/download", async (req, res) => {
+   var addonUuid =  req.query.q;
+   var url = req.protocol + '://' + req.get('host');
+    var name = await getNameByUUID(url, addonUuid)
+   
+    if(!name.error){
+        download(`http://dl.labymod.net/latest/?file=${addonUuid}&a=1`, `./temp/${name.name}.jar`, (err) => {
+            if(!err){
+                res.download(`${__dirname}/temp/${name.name}.jar`,`${name.name}.jar`,(err)=>{
+                    if(err){
+                        console.log(err)
+                    }else{
+                        fs.unlinkSync(`${__dirname}/temp/${name.name}.jar`)
+                    }
+                   
+                })
+                
+               
 
+            }
+        })
+        //res.redirect("/")
+    }else{
+      res.redirect("/")
+    }
+
+})
+function download(url, dest, cb) {
+    const file = fs.createWriteStream(dest);
+    const request = http.get(url, (response) => {
+        if (response.statusCode !== 200) {
+            return cb('Response status was ' + response.statusCode);
+        }
+        response.pipe(file);
+    });
+    // close() is async, call cb after close completes
+    file.on('finish', () => file.close(cb));
+
+    // check for request error too
+    request.on('error', (err) => {
+        fs.unlink(dest);
+        return cb(err.message);
+    });
+
+    file.on('error', (err) => { // Handle errors
+        fs.unlink(dest); // Delete the file async. (But we don't check the result) 
+        return cb(err.message);
+    });
+};
+async function getNameByUUID(baseURL, uuid){
+    var res = await fetch(baseURL + '/api/offical');
+    var text = await res.text();
+    var json = JSON.parse(text).addons
+
+    if(uuid){
+
+        var resName = "undefinded";
+        for(var key of Object.keys(json)){
+            for(var o of json[key]){
+                if(o.uuid === uuid){
+                    resName = o.name;
+                    continue;
+                }
+            }
+        }
+        return({
+            name: resName
+        })
+    }else{
+        return({
+            error: "UUID not defined"
+        })
+    }
+
+
+}
 
 app.get("/", async (req, res) => {
     if(req.session.passport){

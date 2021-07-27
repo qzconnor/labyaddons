@@ -112,7 +112,7 @@ $(window).ready( async() => {
         clon.getElementById('download').setAttribute('data-uuid', addon.uuid);
         clon.getElementById('name-wrap').setAttribute('data-verified', addon.verified)
         if(addon.offical){
-            clon.getElementById('download').setAttribute('data-url', `https://dl.labymod.net/latest/?file=${addon.uuid}&a=1`);
+            clon.getElementById('download').setAttribute('data-url', `/download?q=${addon.uuid}`);
         }else{
             clon.getElementById('download').setAttribute('data-url', addon.dl);
         }
