@@ -2,7 +2,6 @@
     font-family: Minecraft;
     src: url(../fonts/minecraft.woff2) format('woff2');
 }
-
 body {
     background-image: url(../images/bg.png);
 }

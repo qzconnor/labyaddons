@@ -55,7 +55,7 @@ const maintenance = {
     "state": false,
     "allowedIps": []
 }
-const loginBtn = false;
+
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
@@ -151,7 +151,6 @@ app.get("/download", async (req, res) => {
 
             }
         })
-        //res.redirect("/")
     }else{
       res.redirect("/")
     }
@@ -213,8 +212,7 @@ app.get("/", async (req, res) => {
             title: req.hostname + " - Showup",
             user: req.session.passport.user,
             photo: req.session.passport.user.photos[0].value,
-            tabs: proccessTabs(TABS,req.session.rank),
-            loginBtn: loginBtn
+            tabs: proccessTabs(TABS,req.session.rank)
         });
     }else{
         res.render('index',{
@@ -423,6 +421,7 @@ app.get('*',function(req,res){
 app.listen(SERVER_PORT, ()=>{
     console.log(`Server listening on port: ${SERVER_PORT}.`);
     console.log(`SITE: http://localhost:${SERVER_PORT}`);
+
 }) 
 
 
