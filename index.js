@@ -6,23 +6,76 @@ const express = require('express');
 const exphbs = require("express-handlebars");
 const app = express();
 const bodyParser = require("body-parser");
+const passport = require("passport")
+const session = require("express-session")
+const MySQLStore = require('express-mysql-session')(session);
+const GitHubStrategy = require("passport-github2").Strategy
+
 var mysql = require('mysql');
+const fs = require('fs');
+const fetch = require('node-fetch');
+var http = require('http');
+const options = {
+    host:  process.env.DBHOST,
+    port: process.env.PORT,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database:  process.env.DATABASE
+}
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "addons"
+const connection = mysql.createConnection(options);
+let connectionSuccess = false;
+connection.connect(function(err) {
+    if (err) {
+      connectionSuccess = false;
+      return;
+    }
+    connectionSuccess = true;
 });
 
-var connection = false;
+const TABS = [
+    {
+        text: 'Dashboard',
+        link: 'dashboard',
+        allowed: []
+    },
+    {
+        text: 'Team',
+        link: 'team',
+        allowed: [50, 100]
+    },
+    {
+        text: 'Admin',
+        link: 'admin',
+        allowed: [100]
+    }
+]
 
-con.connect(function(err) {
-    if (err) throw err;
-    connection = true;
-});
+const maintenance = {
+    "state": false,
+    "allowedIps": []
+}
 
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
 
+passport.serializeUser(function(user, done) {
+    done(null, user)
+})
+passport.deserializeUser(function(obj, done) {
+    done(null, obj)
+})
+
+passport.use(
+new GitHubStrategy({
+        clientID: GITHUB_CLIENT_ID,
+        clientSecret: GITHUB_CLIENT_SECRET,
+        callbackURL: GITHUB_CALLBACK_URL
+    },(accessToken, refreshToken, profile, done)=> {
+        return done(null, profile)
+    })
+)
 
 app.use(bodyParser.json());
 app.engine('handlebars', exphbs());
@@ -30,11 +83,143 @@ app.set('view engine', 'handlebars');
 app.use('/static', express.static('public'));
 app.use(bodyParser.urlencoded({extended: true})); 
 
+app.use(
+    session({ 
+        secret: "%1(mBk3E9^JW8xA", 
+        resave: false,
+        saveUninitialized: false,
+        store: new MySQLStore(options),
+        cookie: {
+            secure: app.get("env") === "production",
+        }
+    })
+  )
+  app.use(passport.initialize())
+  app.use(passport.session())
+
+  app.use((req, res, next) => {
+    if(maintenance.state && req.hostname != "localhost"){
+        let ip = (req.headers['x-forwarded-for'] || '').split(',')[0];
+        if(!maintenance.allowedIps.includes(ip)){
+            res.render('maintenance',{
+                title: req.hostname + " - Maintenance",
+                requestIP: ip
+            })
+        }
+        next();
+       
+    }
+    if(connectionSuccess && req.session.passport){
+        var githubID = req.session.passport.user.id;
+        connection.query("SELECT * FROM `team` WHERE githubID = " + githubID, (error, results, fields) => { // 46536197
+            if (error){
+                console.error(error)
+            };
+            var rank = 1;
+            var rankName = ""
+            if(results.length > 0){
+                rank = results[0].rank;
+                rankName = results[0].teamStatus;
+            }
+            if(req.session){
+                req.session.rank = rank;
+                req.session.rankName = rankName;
+            }
+           
+        })
+    }
+    next();
+  });
+app.get("/download", async (req, res) => {
+   var addonUuid =  req.query.q;
+   var url = req.protocol + '://' + req.get('host');
+    var name = await getNameByUUID(url, addonUuid)
+   
+    if(!name.error){
+        download(`http://dl.labymod.net/latest/?file=${addonUuid}&a=1`, `./temp/${name.name}.jar`, (err) => {
+            if(!err){
+                res.download(`${__dirname}/temp/${name.name}.jar`,`${name.name}.jar`,(err)=>{
+                    if(err){
+                        console.log(err)
+                    }else{
+                        fs.unlinkSync(`${__dirname}/temp/${name.name}.jar`)
+                    }
+                   
+                })
+                
+               
+
+            }
+        })
+    }else{
+      res.redirect("/")
+    }
+
+})
+function download(url, dest, cb) {
+    const file = fs.createWriteStream(dest);
+    const request = http.get(url, (response) => {
+        if (response.statusCode !== 200) {
+            return cb('Response status was ' + response.statusCode);
+        }
+        response.pipe(file);
+    });
+    // close() is async, call cb after close completes
+    file.on('finish', () => file.close(cb));
+
+    // check for request error too
+    request.on('error', (err) => {
+        fs.unlink(dest);
+        return cb(err.message);
+    });
+
+    file.on('error', (err) => { // Handle errors
+        fs.unlink(dest); // Delete the file async. (But we don't check the result) 
+        return cb(err.message);
+    });
+};
+async function getNameByUUID(baseURL, uuid){
+    var res = await fetch(baseURL + '/api/offical');
+    var text = await res.text();
+    var json = JSON.parse(text).addons
+
+    if(uuid){
+
+        var resName = "undefinded";
+        for(var key of Object.keys(json)){
+            for(var o of json[key]){
+                if(o.uuid === uuid){
+                    resName = o.name;
+                    continue;
+                }
+            }
+        }
+        return({
+            name: resName
+        })
+    }else{
+        return({
+            error: "UUID not defined"
+        })
+    }
+
+
+}
 
 app.get("/", async (req, res) => {
-    res.render('index',{
-        title: req.hostname + " - Showup"
-    });
+    if(req.session.passport){
+        res.render('index',{
+            title: req.hostname + " - Showup",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
+        });
+    }else{
+        res.render('index',{
+            title: req.hostname + " - Showup"
+        });
+    }
+
 })
 app.get("/imprint", async (req, res) => {
     res.render('imprint',{
@@ -46,63 +231,244 @@ app.get("/privacy", async (req, res) => {
         title: req.hostname + " - Privacy Policy"
     });
 })
-app.post("/api/upload", async (req, res) => {
+
+
+
+app.get("/auth/github",passport.authenticate("github", { scope: ["repo"] }), /// Note the scope here
+    function(req, res) { }
+)
+
+app.get('/logout', (req, res) => {
+    if (req.session) {
+      req.session.destroy(err => {
+        if (err) {
+          res.status(400).send('Unable to log out')
+        }
+      });
+    }  
+    res.redirect("/")
+  })
+
+app.get("/auth/github/callback",
+
+    passport.authenticate("github", { failureRedirect: "/" }),
+    function(req, res) {
+        var githubID = req.session.passport.user.id;
+        var username = req.session.passport.user.username;
+        var user = { 
+            githubID: githubID,
+            rank: 1,
+            githubName: username,
+            profileImageUrl: req.session.passport.user.photos[0].value
+        }
+        if(connectionSuccess){
+            connection.query(`INSERT IGNORE INTO team SET ?`,user , (error, results, fields) => {
+                if (error) {
+                    console.error(error)
+                };
+            });
+        }
+       
+        res.redirect("/")
+    }
+  )
+
+app.get("/team", ensureAuthenticated, (req, res) => {
+    if(req.session.passport){
+        res.render('team',{
+            title: req.hostname + " - Team",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
+        });
+    }else{
+        res.render('team',{
+            title: req.hostname + " - Team"
+        });
+    }
+});
+app.get("/admin", ensureAuthenticated, (req, res) => {
+    if(req.session.passport){
+        res.render('admin',{
+            title: req.hostname + " - Admin",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
+        });
+    }else{
+        res.render('admin',{
+            title: req.hostname + " - Admin"
+        });
+    }
+});
+
+app.get("/api/users", (req, res) => {
+    var session = req.session;
+   if(session && session.rank === 100){
+    var users = [];
+
+    if(connectionSuccess){
+        connection.query("SELECT * FROM `team`", (error, results, fields) => { // 46536197
+            if (error){
+                console.error(error)
+            };
+            for(var result of results){
+                users.push(result);
+            }
+            res.status(200).send({
+                "status": 200,
+                "data": users
+           })
+        });
+    }
+
+
+
+     
+   }else{
+    res.status(403).send({
+        "status": 403,
+        "message": "No Perms"
+    })
+   }
+});
+
+
+app.get("/dashboard", ensureAuthenticated, (req, res) => {
+    if(req.session.passport){
+        res.render('dashboard',{
+            title: req.hostname + " - Dashboard",
+            user: req.session.passport.user,
+            photo: req.session.passport.user.photos[0].value,
+            tabs: proccessTabs(TABS,req.session.rank)
+        });
+    }else{
+        res.render('dashboard',{
+            title: req.hostname + " - Dashboard"
+        });
+    }
 })
 
 
 
 app.get("/api/inoffical", async (req, res) => {
-    if(connection){
-        con.query("SELECT * FROM inoffical", function (err, result) {
+    if(connectionSuccess){
+        connection.query("SELECT * FROM inoffical", function (err, result) {
             if (err) throw err;
-            var addons18 = [];
-            var addons112 = [];
-            var addons116 = [];
+            var addons = {
+                "18": [],
+                "112": [],
+                "116": []
+            }
             for(var addon of result){
-                if(addon.version == 18){
-                    addons18.push({
-                        "name": addon.name,
-                        "uuid": addon.uuid,
-                        "uploadedAt": addon.uploadedAt,
-                        "status": addon.status,
-                        "author": addon.author,
-                        "description": addon.description,
-                        "dl": addon.dl
-                    })
-                }else if(addon.version == 112){
-                    addons112.push({
-                        "name": addon.name,
-                        "uuid": addon.uuid,
-                        "uploadedAt": addon.uploadedAt,
-                        "status": addon.status,
-                        "author": addon.author,
-                        "description": addon.description,
-                        "dl": addon.dl
-                    })
-                }else if(addon.version == 116){
-                    addons116.push({
-                        "name": addon.name,
-                        "uuid": addon.uuid,
-                        "uploadedAt": addon.uploadedAt,
-                        "status": addon.status,
-                        "author": addon.author,
-                        "description": addon.description,
-                        "dl": addon.dl
-                    })
-                }
-             
+                addons[addon.version + ''].push({
+                    "name": addon.name,
+                    "uuid": addon.uuid,
+                    "uploadedAt": addon.uploadedAt,
+                    "status": addon.status,
+                    "author": addon.author,
+                    "description": addon.description,
+                    "dl": addon.dl,
+                    "verified": false
+                })
             }
             res.json({
                 "addons": {
-                    "18": addons18,
-                    "112": addons112,
-                    "116": addons116
+                    "18": addons['18'],
+                    "112": addons['112'],
+                    "116": addons['116']
                 }
             })
         });
     }
 })
+app.get("/api/offical", async (req, res) => {
+    var addons = {
+        "18": [],
+        "112": [],
+        "116": []
+    }   
+    let rawdata = fs.readFileSync('./public/addons.json');
+    let result = JSON.parse(rawdata);
+
+    for(var key of Object.keys(result.addons)){
+        var addon = result.addons[key]
+        for(var a of addon){
+            addons[key].push({
+                "name": a.name,
+                "uuid": a.uuid,
+                "author": a.author,
+                "description": a.description,
+                "dl": `https://dl.labymod.net/latest/addons/${a.uuid}/icon.png`,
+                "verified": a.verified
+            })
+        }
+    }
+    res.status(200).json({
+        "time": result.time,
+        "addons": {
+            "18": addons['18'],
+            "112": addons['112'],
+            "116": addons['116']
+        }
+    })
+})
+
+app.get('*',function(req,res){
+    res.redirect('/');
+});
+
 app.listen(SERVER_PORT, ()=>{
     console.log(`Server listening on port: ${SERVER_PORT}.`);
     console.log(`SITE: http://localhost:${SERVER_PORT}`);
+
 }) 
+
+
+
+
+
+
+
+
+
+
+function ensureAuthenticated(req, res, next) {
+    var path = req.originalUrl.replace("/", "");
+    var allowed = isAllowed(path, req.session.rank);
+    if (req.isAuthenticated() && allowed) {
+      return next()
+    }
+
+    res.redirect("/")
+  }
+function isAllowed(tab, rank){
+    var allowed = false;
+    for(var t of TABS){
+        if(t.link === tab){
+            if(t.allowed.length > 0){
+                if(t.allowed.includes(rank)){
+                    allowed = true;
+                }
+            }else{
+                allowed = true;
+            }
+        }
+    }
+    return allowed;
+}
+
+function proccessTabs(tabs, rank){
+    var visableTABS = [];
+    for(var tab of tabs){
+        if(tab.allowed.length > 0){
+            if(tab.allowed.includes(rank)){
+                visableTABS.push(tab)
+            }
+        }else{
+              visableTABS.push(tab)
+        }
+
+    }
+    return visableTABS;
+}

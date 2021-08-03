@@ -14,16 +14,15 @@ var beforTab = tab;
 var tabs = {
     "offical": {
         "v": "18",
-        "search": ""
+        "search": "",
+        "onlyVerified": false
     },
     "inoffical": {
         "v": "18",
-        "search": ""
+        "search": "",
+        "onlyVerified": false
     }
 }
-
-
-
 $(window).ready( async() => { 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -46,27 +45,26 @@ $(window).ready( async() => {
         searchAddons(search);
     }
 
-    $('#offical-search').on('input', (e) => {
-        searchAddons(e.target.value)
-        changeURL()
-    })
-    
-    $('#inoffical-version').on('change', async (e)=>{
-        await fetchAddons(e.target.value);  
-        tabs[tab].v = e.target.value;
-        searchAddons($(`#${tab}-search`).val());
-        changeURL()
-    })
-    $('#offical-version').on('change', async (e)=>{
-        await fetchAddons(e.target.value);  
-        tabs[tab].v = e.target.value;
-        searchAddons($(`#${tab}-search`).val());
-        changeURL()
-    })
-    $('#inoffical-search').on('input', (e) => {
-        searchAddons(e.target.value)
-        changeURL()
-    })
+
+    for(var inOof of Object.keys(tabs)){
+        $(`#${inOof}-version`).on('change', async (e)=>{
+            await fetchAddons(e.target.value);  
+            tabs[tab].v = e.target.value;
+            searchAddons($(`#${tab}-search`).val());
+            changeURL()
+        })
+        $(`#${inOof}-search`).on('input', (e) => {
+            searchAddons(e.target.value)
+            changeURL()
+        })
+        $(`#${inOof}-only`).on('change', () => {
+            console.log($(this).is(':checked'))
+            //await fetchAddons(e.target.value);  
+            //tabs[tab].onlyVerified = e.target.value;
+            //searchAddons($(`#${tab}-search`).val());
+            //changeURL()
+        })
+    }
     
     $(".tablinks").click(async () => {
         await fetchAddons(tabs[tab].v);  
@@ -93,25 +91,34 @@ $(window).ready( async() => {
         }else{
             for(var t in object){
                 var addon = object[t];
-                var clon = addonTemplate.content.cloneNode(true);
-                clon.getElementById('icon').src = addon.url
-                clon.getElementById('icon').alt = addon.t
-                clon.getElementById('name').innerHTML = t;
-                clon.getElementById('author').innerHTML = addon.author
-                clon.getElementById('description').innerHTML = addon.description
-                clon.getElementById('download').setAttribute('data-uuid', addon.uuid);
-                if(addon.offical){
-                    clon.getElementById('download').setAttribute('data-url', `https://dl.labymod.net/latest/?file=${addon.uuid}&a=1`);
-                }else{
-                    clon.getElementById('download').setAttribute('data-url', addon.dl);
+                if(tabs[tab].onlyVerified){
+                    if(addon.verified){
+                        w.appendChild(make(t,addon));
+                    }
+                }else {
+                    w.appendChild(make(t,addon));
                 }
-               
-                w.appendChild(clon);
             }
         }
         
     }
-    
+    function make(name,addon){
+        var clon = addonTemplate.content.cloneNode(true);
+        clon.getElementById('icon').src = addon.url
+        clon.getElementById('icon').alt = name
+        clon.getElementById('name').innerHTML = name;
+        clon.getElementById('author').innerHTML = addon.author
+        clon.getElementById('description').innerHTML = addon.description
+        clon.getElementById('download').setAttribute('data-uuid', addon.uuid);
+        clon.getElementById('name-wrap').setAttribute('data-verified', addon.verified)
+        if(addon.offical){
+            clon.getElementById('download').setAttribute('data-url', `/download?q=${addon.uuid}`);
+        }else{
+            clon.getElementById('download').setAttribute('data-url', addon.dl);
+        }
+        return clon;
+    }
+
     function getAddonsStartsWith(object, str) {
         var addonResult = {};
         for (var property in object) {
@@ -128,10 +135,9 @@ $(window).ready( async() => {
         searchObj["inoffical"] = {};
         searchObj["show-offical"] = {};
         searchObj["show-inoffical"] = {};
-        var data = await $.getJSON( "./static/addons.json");
-
+        var data = await $.getJSON( "./api/offical");
+        console.log(data)
         var time = document.getElementsByClassName('lastfetch');
-        console.log(format_time(data.time))
         for(var i=0; i < time.length; i++) {
             time[i].innerHTML ="Last fetch: " + '<span style="color:#55FF55">' + format_time(data.time) + '</span>';
         }
@@ -142,7 +148,8 @@ $(window).ready( async() => {
                 "description": entry.description,
                 "uuid": entry.uuid,
                 "offical": true,
-                "dl": entry.dl
+                "dl": entry.dl,
+                "verified": entry.verified
             }
         }
         searchObj["show-offical"] = searchObj["offical"];
@@ -156,7 +163,8 @@ $(window).ready( async() => {
                 "description": entry.description,
                 "uuid": entry.uuid,
                 "offical": false,
-                "dl": entry.dl
+                "dl": entry.dl,
+                "verified": entry.verified
             }
         } 
         searchObj["show-inoffical"] = searchObj["inoffical"];
@@ -175,7 +183,7 @@ function removeAllChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
-function openTab(evt, cityName) {
+function openTab(evt, nTab) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -185,10 +193,10 @@ function openTab(evt, cityName) {
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(cityName).style.display = "block";
+    document.getElementById(nTab).style.display = "block";
     evt.currentTarget.className += " active";
     beforTab = tab;
-    tab = cityName.replace("store_", "");
+    tab = nTab.replace("store_", "");
 
 }    
 

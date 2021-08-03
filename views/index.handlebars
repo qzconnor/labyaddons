@@ -1,10 +1,9 @@
-	<meta name="keywords" content="labyaddons.de, laby addons, Laby Addons, labymod addons list, labyaddons list">
-	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://labyaddons.de/">
-	<meta property="og:title" content="labyaddons.de - The LabyMod Addon List">
-	<meta property="og:description" content="This is a list of all offical and inoffical LabyMod Addons.">
-	<meta property="og:image" content="https://i.imgur.com/SDbRq5U.png">
-
+<meta name="keywords" content="labyaddons.de, laby addons, Laby Addons, labymod addons list, labyaddons list">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://labyaddons.de/">
+<meta property="og:title" content="labyaddons.de - The LabyMod Addon List">
+<meta property="og:description" content="This is a list of all official and inofficial LabyMod Addons.">
+<meta property="og:image" content="https://i.imgur.com/SDbRq5U.png">
 <link rel="stylesheet" href="./static/css/btn.css">
 <link rel="stylesheet" href="./static/css/index.css">
 
@@ -16,15 +15,47 @@
 		</div>
 </div>
 
+<div class="labymod">
+	<div>
+		<span style="color: #AAAAAA;">[</span> 
+		<span style="color: #FF5555; font-weight: bold;">!</span> 
+		<span style="color: #AAAAAA;">]</span> 
+		<span style="color: #AAAAAA;">Offical Addons are provided by <a href="https://www.labymod.net" style="color: #AAAAAA;">Labymod</a></span> 
+		<span style="color: #AAAAAA;">[</span> 
+		<span style="color: #FF5555; font-weight: bold;">!</span> 
+		<span style="color: #AAAAAA;">]</span> 
+	</div>
+</div>
+
+	{{#if user}}
+		<div class="user-area">
+			<div class="bg">
+				{{#each tabs}}
+					<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
+				{{/each}}
+				<span class="username">{{user.displayName}}</span>
+				<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
+			</div>
+			<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
+		</div>
+		{{else}}
+			{{#if loginBtn}}
+		<div class="login-btn">
+			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
+		</div>
+			{{/if}}
+	{{/if}}
+
 <div class="wrapper-addon">
 	<div class="wrapper">
 		<div class="tab">
-			<button class="tablinks" onclick="openTab(event, 'store_offical')" id="offical">Offical Store</button>
-			<button class="tablinks" onclick="openTab(event, 'store_inoffical')" id="inoffical">Inoffical Store</button>
+			<button class="tablinks" onclick="openTab(event, 'store_offical')" id="offical">Official Store</button>
+			<button class="tablinks" onclick="openTab(event, 'store_inoffical')" id="inoffical">Inofficial Store</button>
 		</div>
 			<!-- Tab content -->
 			<div data-to="offical" id="store_offical" class="tabcontent">
 					<div class="center">
+						<!--<input type="checkbox" id="offical-only" checked="false">-->
 						<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
 						<div class="select">
 						<select id="offical-version">
@@ -45,6 +76,7 @@
 			</div>
 			<div data-to="inoffical" id="store_inoffical" class="tabcontent">
 					<div class="center">
+						<!--<input type="checkbox" id="inoffical-only" checked="false">-->
 						<input type="text" autocomplete="off" id="inoffical-search" class="search" placeholder="Search..."/>
 						<div class="select">
 							<select id="inoffical-version">
@@ -63,9 +95,6 @@
 					</div>
 			</div>
 	</div>
-
-
-
 </div>
 
 <div id="links">
@@ -78,7 +107,14 @@
 	<div class="addon-card">
 	<img id="icon" src="#" alt="NAME" class="addon-img">
 	<div class="addon-text">
-		<h2 id="name">ADDON NAME</h2>
+		<div class="name-wrap" id="name-wrap" data-verified="false">
+			<h2 id="name">ADDON NAME</h2>
+			<div class="tooltip"><span class="verified-badge"><i class="fas fa-star"></i></span>
+				<span class="tooltiptext">LabyMod Featured</span>
+			</div>
+		
+		</div>
+		
 		<p id="author">ADDON AUTHOR</p>
 		<p id="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate incidunt recusandae at? Est odit suscipit consequuntur? Dignissimos aut assumenda tempore, a perspiciatis odit quas voluptatum optio dicta, ex tempora doloremque.</p>
 	</div>  
@@ -87,6 +123,12 @@
 	</div>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript">
+    function redirect(url){
+ 		location.href = url;
+	}
+</script>
+
+
 <script src="./static/js/app.js"></script>
 <script src="./static/js/messages.js"></script>

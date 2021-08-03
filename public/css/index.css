@@ -1,11 +1,5 @@
-@font-face {
-    font-family: Minecraft;
-    src: url(../fonts/minecraft.woff2) format('woff2');
-}
+@import "tooltip.css";
 
-:root{
-    --data-offset: 0;
-}
 [type="text"]{
     background-color: rgba(0, 0, 0, .5) !important;
     padding: 8px 8px 4px 8px !important;
@@ -23,12 +17,21 @@
     outline: none !important;
     border: 2.5px solid rgba(102, 100, 100, 0.5) !important;
 }
+.labymod {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+}
+.labymod span{
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+}
+
 .addons{
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-y: auto;
-    height: 80vh;
+    height: 75vh;
 }
 .wrapper-addon .left{
     position: fixed;
@@ -51,7 +54,18 @@
     width: 200px;
     margin-bottom: 15px;
 }
-
+.addon-card .name-wrap{
+    margin-top: 5px;
+}
+.addon-card .name-wrap h2{
+    display: inline;
+}
+.addon-card .name-wrap[data-verified="true"] i,.addon-card .name-wrap[data-verified="true"] #name{
+    color:#FFFF55;
+}
+.addon-card .name-wrap[data-verified="false"] .verified-badge{
+    display: none;
+}
 .vertical-center {
     display: flex;
     justify-content: center;
@@ -95,12 +109,6 @@
     margin: 0;
     margin-top: 5px;
 }
-@media (max-width: 620px) {
-    .container__text {
-        width: 100%;
-   }
-}
-
 
 /* Style the tab */
 .tab {
@@ -224,6 +232,7 @@
     position: absolute;
     right: 0;
     top: 0;
+    z-index: 999;
     /*animation: slideInOutAnimation 1s ease;*/
 
 }
@@ -249,6 +258,16 @@
     position: absolute;
     left: 17px;
     bottom: 17px;
+}
+@media (max-width: 620px) {
+    .container__text {
+        width: 100%;
+   }
+}
+@media (max-width: 1050px) {
+    .wrapper-addon {
+        margin-top: 35px;
+   }
 }
 @keyframes slideInOutAnimation {
     0%, 10% {
@@ -305,5 +324,16 @@
     }
     .search{
         width: 50%;
+    }
+    .labymod{
+        left: 0;
+        width: 100%;
+        text-align: center;
+    }
+    .wrapper-addon {
+        margin-top: 40px;
+    }
+    .labymod span {
+        font-size: 13px;
     }
 }
