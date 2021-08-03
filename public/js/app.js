@@ -8,6 +8,7 @@ var searchObj = {
     "show-offical": {},
     "show-inoffical": {}
 };
+
 var tab = "offical";
 var beforTab = tab;
 
@@ -45,7 +46,6 @@ $(window).ready( async() => {
         searchAddons(search);
     }
 
-
     for(var inOof of Object.keys(tabs)){
         $(`#${inOof}-version`).on('change', async (e)=>{
             await fetchAddons(e.target.value);  
@@ -80,6 +80,7 @@ $(window).ready( async() => {
             drawAddons(tab + "-addons",searchObj["show-" + tab]);
         }
     }
+
     function drawAddons(where,object){
         var w =  document.getElementById(where);
         removeAllChildNodes(w)
@@ -102,6 +103,7 @@ $(window).ready( async() => {
         }
         
     }
+
     function make(name,addon){
         var clon = addonTemplate.content.cloneNode(true);
         clon.getElementById('icon').src = addon.url
@@ -172,6 +174,7 @@ $(window).ready( async() => {
     }
 
 })
+
 function format_time(s) {
     const milliseconds = s * 1000;
     const dateObject = new Date(milliseconds);
@@ -183,6 +186,7 @@ function removeAllChildNodes(parent) {
         parent.removeChild(parent.firstChild);
     }
 }
+
 function openTab(evt, nTab) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -214,6 +218,7 @@ function changeURL(){
     q += `&v=${version}`;
     changeQueryString(q,undefined);
 }
+
 function changeQueryString(searchString, documentTitle){      
     documentTitle = typeof documentTitle !== 'undefined' ? documentTitle : document.title;      
     var urlSplit=( window.location.href ).split( "?" );      
@@ -224,4 +229,3 @@ function changeQueryString(searchString, documentTitle){
 function download(el){
     window.open(el.getAttribute('data-url'), "_blank");
 }
-

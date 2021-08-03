@@ -6,21 +6,21 @@
 </div>
 
 {{#if user}}
-		<div class="user-area">
-			<div class="bg">
-				{{#each tabs}}
-					<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
-				{{/each}}
-				<span class="username">{{user.displayName}}</span>
-				<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
-			</div>
-			<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
+	<div class="user-area">
+		<div class="bg">
+			{{#each tabs}}
+				<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
+			{{/each}}
+			<span class="username">{{user.displayName}}</span>
+			<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
 		</div>
-		{{else}}
-		<div class="login-btn">
-			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
-		</div>
-	{{/if}}
+		<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
+	</div>
+	{{else}}
+	<div class="login-btn">
+		<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
+	</div>
+{{/if}}
 
 <script type="text/javascript">
     document.getElementById("back").onclick = function () {

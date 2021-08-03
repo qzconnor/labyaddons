@@ -4,7 +4,3 @@ $(window).ready(async ()=>{
         console.log(user)
     }
 })
-
-
-
-//////////////////////////////////

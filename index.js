@@ -63,6 +63,7 @@ const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
 passport.serializeUser(function(user, done) {
     done(null, user)
 })
+
 passport.deserializeUser(function(obj, done) {
     done(null, obj)
 })
@@ -93,11 +94,12 @@ app.use(
             secure: app.get("env") === "production",
         }
     })
-  )
-  app.use(passport.initialize())
-  app.use(passport.session())
+)
 
-  app.use((req, res, next) => {
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use((req, res, next) => {
     if(maintenance.state && req.hostname != "localhost"){
         let ip = (req.headers['x-forwarded-for'] || '').split(',')[0];
         if(!maintenance.allowedIps.includes(ip)){
@@ -107,8 +109,8 @@ app.use(
             })
         }
         next();
-       
     }
+    
     if(connectionSuccess && req.session.passport){
         var githubID = req.session.passport.user.id;
         connection.query("SELECT * FROM `team` WHERE githubID = " + githubID, (error, results, fields) => { // 46536197
@@ -129,12 +131,14 @@ app.use(
         })
     }
     next();
-  });
+  }
+);
+  
 app.get("/download", async (req, res) => {
-   var addonUuid =  req.query.q;
-   var url = req.protocol + '://' + req.get('host');
+var addonUuid =  req.query.q;
+var url = req.protocol + '://' + req.get('host');
     var name = await getNameByUUID(url, addonUuid)
-   
+
     if(!name.error){
         download(`http://dl.labymod.net/latest/?file=${addonUuid}&a=1`, `./temp/${name.name}.jar`, (err) => {
             if(!err){
@@ -144,18 +148,19 @@ app.get("/download", async (req, res) => {
                     }else{
                         fs.unlinkSync(`${__dirname}/temp/${name.name}.jar`)
                     }
-                   
+                
                 })
                 
-               
+            
 
             }
         })
     }else{
-      res.redirect("/")
+    res.redirect("/")
     }
 
 })
+
 function download(url, dest, cb) {
     const file = fs.createWriteStream(dest);
     const request = http.get(url, (response) => {
@@ -178,6 +183,7 @@ function download(url, dest, cb) {
         return cb(err.message);
     });
 };
+
 async function getNameByUUID(baseURL, uuid){
     var res = await fetch(baseURL + '/api/offical');
     var text = await res.text();
@@ -197,13 +203,11 @@ async function getNameByUUID(baseURL, uuid){
         return({
             name: resName
         })
-    }else{
+    } else {
         return({
             error: "UUID not defined"
         })
     }
-
-
 }
 
 app.get("/", async (req, res) => {
@@ -219,20 +223,19 @@ app.get("/", async (req, res) => {
             title: req.hostname + " - Showup"
         });
     }
-
 })
+
 app.get("/imprint", async (req, res) => {
     res.render('imprint',{
         title: req.hostname + " - Imprint"
     });
 })
+
 app.get("/privacy", async (req, res) => {
     res.render('privacy',{
         title: req.hostname + " - Privacy Policy"
     });
 })
-
-
 
 app.get("/auth/github",passport.authenticate("github", { scope: ["repo"] }), /// Note the scope here
     function(req, res) { }
@@ -240,17 +243,16 @@ app.get("/auth/github",passport.authenticate("github", { scope: ["repo"] }), ///
 
 app.get('/logout', (req, res) => {
     if (req.session) {
-      req.session.destroy(err => {
+        req.session.destroy(err => {
         if (err) {
-          res.status(400).send('Unable to log out')
+            res.status(400).send('Unable to log out')
         }
-      });
+        });
     }  
     res.redirect("/")
-  })
+})
 
 app.get("/auth/github/callback",
-
     passport.authenticate("github", { failureRedirect: "/" }),
     function(req, res) {
         var githubID = req.session.passport.user.id;
@@ -268,10 +270,10 @@ app.get("/auth/github/callback",
                 };
             });
         }
-       
+        
         res.redirect("/")
     }
-  )
+)
 
 app.get("/team", ensureAuthenticated, (req, res) => {
     if(req.session.passport){
@@ -287,6 +289,7 @@ app.get("/team", ensureAuthenticated, (req, res) => {
         });
     }
 });
+
 app.get("/admin", ensureAuthenticated, (req, res) => {
     if(req.session.passport){
         res.render('admin',{
@@ -304,35 +307,30 @@ app.get("/admin", ensureAuthenticated, (req, res) => {
 
 app.get("/api/users", (req, res) => {
     var session = req.session;
-   if(session && session.rank === 100){
-    var users = [];
+    if(session && session.rank === 100){
+        var users = [];
 
-    if(connectionSuccess){
-        connection.query("SELECT * FROM `team`", (error, results, fields) => { // 46536197
-            if (error){
-                console.error(error)
-            };
-            for(var result of results){
-                users.push(result);
-            }
-            res.status(200).send({
-                "status": 200,
-                "data": users
-           })
-        });
+        if(connectionSuccess){
+            connection.query("SELECT * FROM `team`", (error, results, fields) => { // 46536197
+                if (error){
+                    console.error(error)
+                };
+                for(var result of results){
+                    users.push(result);
+                }
+                res.status(200).send({
+                    "status": 200,
+                    "data": users
+            })
+            });
+        } 
+    } else {
+        res.status(403).send({
+            "status": 403,
+            "message": "No Perms"
+        })
     }
-
-
-
-     
-   }else{
-    res.status(403).send({
-        "status": 403,
-        "message": "No Perms"
-    })
-   }
 });
-
 
 app.get("/dashboard", ensureAuthenticated, (req, res) => {
     if(req.session.passport){
@@ -348,8 +346,6 @@ app.get("/dashboard", ensureAuthenticated, (req, res) => {
         });
     }
 })
-
-
 
 app.get("/api/inoffical", async (req, res) => {
     if(connectionSuccess){
@@ -382,6 +378,7 @@ app.get("/api/inoffical", async (req, res) => {
         });
     }
 })
+
 app.get("/api/offical", async (req, res) => {
     var addons = {
         "18": [],
@@ -424,15 +421,6 @@ app.listen(SERVER_PORT, ()=>{
 
 }) 
 
-
-
-
-
-
-
-
-
-
 function ensureAuthenticated(req, res, next) {
     var path = req.originalUrl.replace("/", "");
     var allowed = isAllowed(path, req.session.rank);
@@ -441,7 +429,8 @@ function ensureAuthenticated(req, res, next) {
     }
 
     res.redirect("/")
-  }
+}
+
 function isAllowed(tab, rank){
     var allowed = false;
     for(var t of TABS){

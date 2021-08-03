@@ -27,24 +27,24 @@
 	</div>
 </div>
 
-	{{#if user}}
-		<div class="user-area">
-			<div class="bg">
-				{{#each tabs}}
-					<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
-				{{/each}}
-				<span class="username">{{user.displayName}}</span>
-				<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
-			</div>
-			<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
+{{#if user}}
+	<div class="user-area">
+		<div class="bg">
+			{{#each tabs}}
+				<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
+			{{/each}}
+			<span class="username">{{user.displayName}}</span>
+			<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
 		</div>
-		{{else}}
-			{{#if loginBtn}}
-		<div class="login-btn">
-			<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
-		</div>
-			{{/if}}
-	{{/if}}
+		<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
+	</div>
+	{{else}}
+		{{#if loginBtn}}
+	<div class="login-btn">
+		<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
+	</div>
+		{{/if}}
+{{/if}}
 
 <div class="wrapper-addon">
 	<div class="wrapper">
@@ -102,7 +102,6 @@
 	<a href="privacy">Privacy Policy</a>
 </div>
 
-
 <template id="addon-template">
 	<div class="addon-card">
 	<img id="icon" src="#" alt="NAME" class="addon-img">
@@ -128,7 +127,6 @@
  		location.href = url;
 	}
 </script>
-
 
 <script src="./static/js/app.js"></script>
 <script src="./static/js/messages.js"></script>
