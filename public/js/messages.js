@@ -13,7 +13,7 @@ function share(){
   
   changeMessage({
       "title": '<span style="color:#55FF55">Succefully!</span>',
-      "description": "Succefull copied text link to Clipboard!"
+      "description": "Succefull copied link to Clipboard!"
   });
 }
 
