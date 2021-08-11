@@ -24,7 +24,7 @@ var tabs = {
         "onlyVerified": false
     }
 }
-$(window).ready( async() => { 
+$(window).ready(async () => { 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
 
@@ -110,7 +110,7 @@ $(window).ready( async() => {
         clon.getElementById('icon').alt = name
         clon.getElementById('name').innerHTML = name;
         clon.getElementById('author').innerHTML = addon.author
-        clon.getElementById('description').innerHTML = addon.description
+        clon.getElementById('description').innerHTML = cut(addon.description, 250)
         clon.getElementById('download').setAttribute('data-uuid', addon.uuid);
         clon.getElementById('name-wrap').setAttribute('data-verified', addon.verified)
         if(addon.offical){
@@ -119,6 +119,10 @@ $(window).ready( async() => {
             clon.getElementById('download').setAttribute('data-url', addon.dl);
         }
         return clon;
+    }
+
+    function cut(str, len){
+        return str.substring(0, len) + (str.length >= len ? "..." : "");
     }
 
     function getAddonsStartsWith(object, str) {
@@ -138,7 +142,7 @@ $(window).ready( async() => {
         searchObj["show-offical"] = {};
         searchObj["show-inoffical"] = {};
         var data = await $.getJSON( "./api/offical");
-        console.log(data)
+        //console.log(data)
         var time = document.getElementsByClassName('lastfetch');
         for(var i=0; i < time.length; i++) {
             time[i].innerHTML ="Last fetch: " + '<span style="color:#55FF55">' + format_time(data.time) + '</span>';

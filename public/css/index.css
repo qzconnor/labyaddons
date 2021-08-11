@@ -50,8 +50,7 @@
     border: none;
 }
 
-.addon-card { 
-    width: 200px;
+.addon-card:not(:last-of-type) { 
     margin-bottom: 15px;
 }
 .addon-card .name-wrap{
