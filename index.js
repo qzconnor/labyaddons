@@ -56,6 +56,7 @@ app.get("/details/:uuid", async (req, res) => {
           layout: "details",
           title: req.hostname + " - Details",
           uuid,
+          author: addon.addon.author,
           name:addon.addon.name,
           desc:addon.addon.description,
           isVerified: addon.addon.verified,

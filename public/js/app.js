@@ -17,15 +17,19 @@ window.addEventListener('load', async ()=>{
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
   
-    if (params.v) {
+    if (params.v && ["18", "112", "116"].includes(params.v)) {
       tabs["offical"].v = params.v;
+      $(`#offical-version`).val(tabs["offical"].v)
     }
-  
+    if(params.verified && ['true', 'false'].includes(params.verified)){
+      tabs["offical"].onlyVerified = $.parseJSON(params.verified.toLowerCase());
+    }
+    $(`#offical-only`).attr('checked', tabs["offical"].onlyVerified)
+
     await fetchAddons(tabs["offical"].v);
-    console.log(searchObj);
     if (params.search && params.search !== "") {
       var search = params.search;
-      console.log( $("#offical-search"))
+      tabs["offical"].search = search;
       $("#offical-search").val(search);
       searchAddons(search);
     }
@@ -37,15 +41,16 @@ window.addEventListener('load', async ()=>{
         changeURL()
     })
     $(`#offical-search`).on('input', (e) => {
-        searchAddons(e.target.value)
+        tabs["offical"].search = e.target.value;
+        searchAddons(tabs["offical"].search)
         changeURL()
     })
-    $(`#offical-only`).on('change', () => {
-        console.log($(this).is(':checked'))
-        //await fetchAddons(e.target.value);  
-        //tabs[tab].onlyVerified = e.target.value;
-        //searchAddons($(`#${tab}-search`).val());
-        //changeURL()
+    $(`#offical-only`).on('change', async () => {
+        var checked = $(`#offical-only`).is(':checked');
+        tabs["offical"].onlyVerified = checked;
+        await fetchAddons(tabs["offical"].v);  
+        searchAddons(tabs["offical"].search);
+        changeURL()
     })
 
     function searchAddons(q) {
@@ -69,13 +74,7 @@ window.addEventListener('load', async ()=>{
       } else {
         for (var t in object) {
           var addon = object[t];
-          if (tabs["offical"].onlyVerified) {
-            if (addon.verified) {
-              w.appendChild(make(t, addon));
-            }
-          } else {
-            w.appendChild(make(t, addon));
-          }
+          w.appendChild(make(t, addon));
         }
       }
     }
@@ -138,20 +137,31 @@ window.addEventListener('load', async ()=>{
           format_time(data.time) +
           "</span>";
       }
+      console.log(version)
       for (var entry of data.addons[version]) {
-        searchObj["offical"][entry.name] = {
-          url: `https://dl.labymod.net/latest/addons/${entry.uuid}/icon.png`,
-          author: "by " + entry.author,
-          description: entry.description,
-          uuid: entry.uuid,
-          offical: true,
-          dl: entry.dl,
-          verified: entry.verified,
-        };
+        if(tabs["offical"].onlyVerified){
+          if(entry.verified) searchObj["offical"][entry.name] = setOB(entry)
+        }else{
+          searchObj["offical"][entry.name] = setOB(entry)
+        }
+         
       }
       searchObj["show-offical"] = searchObj["offical"];
       drawAddons("offical-addons", searchObj["show-offical"]);
     }
+
+    function setOB(entry){
+      return {
+        url: `https://dl.labymod.net/latest/addons/${entry.uuid}/icon.png`,
+        author: "by " + entry.author,
+        description: entry.description,
+        uuid: entry.uuid,
+        offical: true,
+        dl: entry.dl,
+        verified: entry.verified,
+      };
+    }
+
 });
 
 function format_time(s) {
@@ -174,5 +184,5 @@ function removeAllChildNodes(parent) {
   }
 }
 function openDetails(addonID){
-    window.open("/details/" + addonID)
+    window.location = "/details/" + addonID
 }

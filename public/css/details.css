@@ -19,8 +19,18 @@ body,html{
     border: 2.5px solid rgba(102, 100, 100, 0.5) !important;
     background-color: rgba(0, 0, 0, .5) !important;
     transform: scale(150%);
+    position: relative;
 }
 
+.box .author{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+.box .author p{
+    color: #55FF55;
+    font-size: 9px;
+}
 .box .left img{
     padding: 10%;
     width: 100px;

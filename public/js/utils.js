@@ -1,11 +1,13 @@
 function changeURL(){
     var searchVal = $(`#offical-search`).val();
     var version = $(`#offical-version`).val();
+    var verified = $(`#offical-only`).is(':checked');
     var q = "?"
     if(searchVal !== ""){
         q += `search=${searchVal}`
     }
     q += `&v=${version}`;
+    q += `&verified=${verified}`;
     changeQueryString(q,undefined);
 }
 
