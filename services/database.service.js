@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const CONFIG = require("../config.json").DB;
+const CONFIG = require("../config.json").DATABASE;
 
 const connection = mysql.createConnection({
     port: CONFIG.PORT,

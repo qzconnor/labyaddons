@@ -29,7 +29,14 @@
 <div class="wrapper-addon">
 	<div class="wrapper">
 <div class="center">
-					<input type="checkbox" id="offical-only" checked="false">
+					<!--<input type="checkbox" id="offical-only" checked="false">-->
+					<div class="checkbox">
+						<span class="title">VERIFYED ONLY</span>
+						<div id="offical-only">
+							<img src="./static/images/check.png" alt="checkbox-icon" id="checkbox-icon">
+						</div>
+					</div>
+					
 					<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
 					<div class="select">
 					<select id="offical-version">
@@ -75,12 +82,16 @@
 	</div>
 </template>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script type="text/javascript">
     function redirect(url){
  		location.href = url;
 	}
+	$("#offical-only").click(() => {
+		$("#offical-only").toggleClass("checked")
+	})
+
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="./static/js/utils.js"></script>
 <script src="./static/js/app.js"></script>
 <script src="./static/js/messages.js"></script>

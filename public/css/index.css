@@ -43,13 +43,40 @@
 .wrapper-addon #search{
     margin-top: 25px;
 }
-[type="checkbox"]{
-    background-color: #C0C0C0;
-    height: 40px;
-    width: 40px;
-    border: none;
+.checkbox{
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
 }
-
+#offical-only{
+    width: 40px;
+    height: 40px;
+    border: 2.5px solid rgba(102, 100, 100, 0.5) !important;
+    background: rgba(0, 0, 0, .5) !important;
+    z-index: 0;
+    position: relative;
+    user-select: none;
+    
+}
+#offical-only #checkbox-icon{
+    width: 47px;
+    height: 45px;
+    pointer-events: none;
+    position: absolute;
+    top: -5px;
+    left: -3px;
+}
+.checkbox .title{
+    text-align: center;
+    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
+    margin-right: 5px;
+}
+#offical-only:not(.checked) #checkbox-icon{
+    display: none;
+}
+#offical-only.checked #checkbox-icon{
+    display: block;
+}
 .addon-card:not(:last-of-type) { 
     margin-bottom: 15px;
 }

@@ -30,7 +30,9 @@ window.addEventListener('load', async ()=>{
     if(params.verified && ['true', 'false'].includes(params.verified)){
       tabs["offical"].onlyVerified = $.parseJSON(params.verified.toLowerCase());
     }
-    $(`#offical-only`).attr('checked', tabs["offical"].onlyVerified)
+    if(tabs["offical"].onlyVerified){
+      $(`#offical-only`).addClass("checked");
+    }
 
     await fetchAddons(tabs["offical"].v);
     if (params.search && params.search !== "") {
@@ -51,8 +53,8 @@ window.addEventListener('load', async ()=>{
         searchAddons(tabs["offical"].search)
         changeURL()
     })
-    $(`#offical-only`).on('change', async () => {
-        var checked = $(`#offical-only`).is(':checked');
+    $(`#offical-only`).on('click', async () => {
+        var checked = $(`#offical-only`).hasClass("checked");
         tabs["offical"].onlyVerified = checked;
         await fetchAddons(tabs["offical"].v);  
         searchAddons(tabs["offical"].search);
@@ -134,7 +136,6 @@ window.addEventListener('load', async ()=>{
       searchObj["show-offical"] = {};
       searchObj["show-inoffical"] = {};
       var data = await $.getJSON("./api/offical");
-      //console.log(data)
       var time = document.getElementsByClassName("lastfetch");
       for (var i = 0; i < time.length; i++) {
         time[i].innerHTML =
@@ -143,7 +144,6 @@ window.addEventListener('load', async ()=>{
           format_time(data.time) +
           "</span>";
       }
-      console.log(version)
       for (var entry of data.addons[version]) {
         if(tabs["offical"].onlyVerified){
           if(entry.verified) searchObj["offical"][entry.name] = setOB(entry)
