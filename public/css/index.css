@@ -51,8 +51,8 @@
 #offical-only{
     width: 38px;
     height: 38px;
-    border: 2.5px solid rgba(102, 100, 100, 0.5) !important;
-    background: rgba(0, 0, 0, .5) !important;
+    border: 2.5px solid #aaaaaa !important;
+    background: #787878 !important;
     z-index: 0;
     position: relative;
     user-select: none;
