@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="/static/css/btn.css">
+<link rel="stylesheet" href="/static/css/details.css">
+<div class="back">
+    <button class="btn back" id="back"><i class="fas fa-arrow-left"></i></button>	
+</div>
+<div class="box">
+    <div class="author">
+        <p>by {{author}}</p>
+    </div>
+    <div class="left">
+        <div class="half-containers">
+            <img src="{{imageURL}}" alt="{{uuid}}">
+        </div>
+        <div class="data half-containers" data-verified="{{isVerified}}">
+           <h3 class="name">{{name}}<span class="verified-badge"><i class="fas fa-star"></i></span></h3>
+           <hr>
+           <p class="description">{{desc}}</p>
+        </div>
+    </div>
+    <div class="right">
+        <div class="dowmloads">
+            <p><span class="downloadNumber">{{downloads}}</span> Downloads</p>
+        </div>
+        <div class="commingSoon">
+            <p>More Soon...</p>
+        </div>
+    </div>
+</div>
+<script>
+    var back = document.getElementById('back');
+    back.addEventListener('click', () => {
+        window.location = "/"
+    })
+</script>

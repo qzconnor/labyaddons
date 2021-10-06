@@ -20,81 +20,33 @@
 		<span style="color: #AAAAAA;">[</span> 
 		<span style="color: #FF5555; font-weight: bold;">!</span> 
 		<span style="color: #AAAAAA;">]</span> 
-		<span style="color: #AAAAAA;">Offical Addons are provided by <a href="https://www.labymod.net" style="color: #AAAAAA;">Labymod</a></span> 
+		<span style="color: #AAAAAA;"> Addons are provided by <a href="https://www.labymod.net" style="color: #AAAAAA;">Labymod</a></span> 
 		<span style="color: #AAAAAA;">[</span> 
 		<span style="color: #FF5555; font-weight: bold;">!</span> 
 		<span style="color: #AAAAAA;">]</span> 
 	</div>
 </div>
-
-{{#if user}}
-	<div class="user-area">
-		<div class="bg">
-			{{#each tabs}}
-				<span class="link"><a href="{{this.link}}">{{this.text}}</a></span>
-			{{/each}}
-			<span class="username">{{user.displayName}}</span>
-			<a href="{{user.profileUrl}}" class="profile-link"><img src="{{photo}}" alt="{{user.displayName}}"></a>
-		</div>
-		<span class="link"><a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></span>
-	</div>
-	{{else}}
-		{{#if loginBtn}}
-	<div class="login-btn">
-		<button class="btn login" id="login" onclick="redirect('/auth/github');"><span>Login with </span> <i class="fab fa-github"></i></button>
-	</div>
-		{{/if}}
-{{/if}}
-
 <div class="wrapper-addon">
 	<div class="wrapper">
-		<div class="tab">
-			<button class="tablinks" onclick="openTab(event, 'store_offical')" id="offical">Official Store</button>
-			<button class="tablinks" onclick="openTab(event, 'store_inoffical')" id="inoffical">Inofficial Store</button>
-		</div>
-			<!-- Tab content -->
-			<div data-to="offical" id="store_offical" class="tabcontent">
-					<div class="center">
-						<!--<input type="checkbox" id="offical-only" checked="false">-->
-						<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
-						<div class="select">
-						<select id="offical-version">
-							<option selected value="18">1.8</option>
-							<option value="112">1.12</option>
-							<option value="116">1.16</option>
-						</select>
-						<div class="select_arrow">
-					</div>
-					</div>
-					<button class="btn share" id="share" onclick="share();"><i class="fas fa-share-alt"></i></button>
+<div class="center">
+					<input type="checkbox" id="offical-only" checked="false">
+					<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
+					<div class="select">
+					<select id="offical-version">
+						<option selected value="18">1.8</option>
+						<option value="112">1.12</option>
+						<option value="116">1.16</option>
+					</select>
+					<div class="select_arrow">
 				</div>
-				<div class="center time"><p class="lastfetch">TIME</p></div>
-								
-				<div class="center">
-					<div id="offical-addons" class="addons"></div>
 				</div>
+				<button class="btn share" id="share" onclick="share();"><i class="fas fa-share-alt"></i></button>
 			</div>
-			<div data-to="inoffical" id="store_inoffical" class="tabcontent">
-					<div class="center">
-						<!--<input type="checkbox" id="inoffical-only" checked="false">-->
-						<input type="text" autocomplete="off" id="inoffical-search" class="search" placeholder="Search..."/>
-						<div class="select">
-							<select id="inoffical-version">
-								<option selected value="18">1.8</option>
-								<option value="112">1.12</option>
-								<option value="116">1.16</option>
-							</select>
-							<div class="select_arrow">
-							</div>
-					</div>
-					<button class="btn share" id="share" onclick="share();"><i class="fas fa-share-alt"></i></button>
-					</div>
-					<div class="center time"><p class="lastfetch">TIME</p></div>
-					<div class="center">
-						<div id="inoffical-addons"  class="addons"></div>
-					</div>
+			<div class="center time"><p class="lastfetch">TIME</p></div>
+							
+			<div class="center">
+				<div id="offical-addons" class="addons"></div>
 			</div>
-	</div>
 </div>
 
 <div id="links">
@@ -119,6 +71,7 @@
 	</div>  
 	<div class="vertical-center">
 		<button class="btn download" id="download" onclick="download(this);"><i class="fas fa-download"></i></button>
+		<button class="btn download" id="open"><i class="fas fa-external-link-alt"></i></button>
 	</div>
 </template>
 
@@ -127,6 +80,7 @@
  		location.href = url;
 	}
 </script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="./static/js/utils.js"></script>
 <script src="./static/js/app.js"></script>
 <script src="./static/js/messages.js"></script>
