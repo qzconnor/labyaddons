@@ -56,6 +56,7 @@
     z-index: 0;
     position: relative;
     user-select: none;
+    cursor: pointer;
     
 }
 #offical-only #checkbox-icon{

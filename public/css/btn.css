@@ -8,52 +8,6 @@ button.btn i {
     color: black;
     font-size: 20px;
 }
-
-.login-btn button{
-    width: 120px !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.login-btn button{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-.login-btn span {
-    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
-    color: black;
-    margin-right: 5px;
-}
-
-.user-area{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-}
-.user-area .bg{
-    display: flex;
-    background-color:rgba(0, 0, 0, .5);
-}
-.user-area .profile-link{
-    width: 50px;
-    height: 50px;
-}
-.user-area span{
-    display: flex;
-    align-items: center;
-    color: white;
-    padding: 9px;
-    font-family: Minecraft, Arial, Helvetica, sans-serif !important;
-}
-.user-area .username{
-    color: #55FF55 !important;
-}
-.user-area img{
-    width: 100%;
-    border-radius: 50%;
-}
 .back{
     position: absolute;
     top: 15px;
