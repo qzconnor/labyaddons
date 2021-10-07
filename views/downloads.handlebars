@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="/static/css/btn.css">
+<link rel="stylesheet" href="/static/css/downloads.css">
+<div class="back">
+    <!--<button class="btn back" id="back"><i class="fas fa-arrow-left"></i></button>-->
+    <script>
+        var back = document.getElementById('back');
+        back.addEventListener('click', () => {
+            window.location = "/"
+        })
+    </script>
+</div>
+{{#each addons}}
+   <div> {{this.name}}:{{this.downloads}}</div>
+{{/each}}

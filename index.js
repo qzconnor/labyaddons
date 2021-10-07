@@ -14,6 +14,9 @@ app.use("/static", express.static("public"));
 
 const DB = require("./services/database.service.js");
 
+
+app.use("/downloads", require("./routes/admin.js"))
+
 app.get("/", async (req, res) => {
   res.render("index", {
     title: req.hostname + " - Showup",
