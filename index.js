@@ -97,6 +97,7 @@ app.get("/api/offical", async (req, res) => {
         description: a.description,
         dl: `https://dl.labymod.net/latest/addons/${a.uuid}/icon.png`,
         verified: a.verified,
+        version: key
       });
     }
   }

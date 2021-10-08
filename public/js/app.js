@@ -23,7 +23,7 @@ window.addEventListener('load', async ()=>{
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
   
-    if (params.v && ["18", "112", "116"].includes(params.v)) {
+    if (params.v && ["18", "112", "116", "ALL"].includes(params.v)) {
       tabs["offical"].v = params.v;
       $(`#offical-version`).val(tabs["offical"].v)
     }
@@ -92,7 +92,7 @@ window.addEventListener('load', async ()=>{
       clon.getElementById("icon").src = addon.url;
       clon.getElementById("icon").alt = name;
       clon.getElementById("name").innerHTML = name;
-      clon.getElementById("author").innerHTML = addon.author;
+      clon.getElementById("author").innerHTML = addon.author  + (tabs["offical"].v === "ALL" ? ` (v${formatVersion(addon.version)})` : "");
       clon.getElementById("description").innerHTML = cut(addon.description, 250);
       clon.getElementById("download").setAttribute("data-uuid", addon.uuid);
      
@@ -110,6 +110,19 @@ window.addEventListener('load', async ()=>{
       clon
       .getElementById("open")
       .setAttribute("onclick", `openDetails("${addon.uuid}")`);
+
+
+      function formatVersion(versionString){
+          var obj = {
+            "116": "1.16",
+            "18": "1.8.9",
+            "112": "1.12"
+          }
+        return obj[versionString];
+      }
+
+
+
 
       return clon;
     }
@@ -144,13 +157,26 @@ window.addEventListener('load', async ()=>{
           format_time(data.time) +
           "</span>";
       }
-      for (var entry of data.addons[version]) {
-        if(tabs["offical"].onlyVerified){
-          if(entry.verified) searchObj["offical"][entry.name] = setOB(entry)
-        }else{
-          searchObj["offical"][entry.name] = setOB(entry)
+      if(version === "ALL"){
+        for(var version of ["18", "112", "116"]){
+          for (var entry of data.addons[version]) {
+            if(tabs["offical"].onlyVerified){
+              if(entry.verified) searchObj["offical"][entry.name] = setOB(entry)
+            }else{
+              searchObj["offical"][entry.name] = setOB(entry)
+            }
+             
+          }
         }
-         
+      }else{
+        for (var entry of data.addons[version]) {
+          if(tabs["offical"].onlyVerified){
+            if(entry.verified) searchObj["offical"][entry.name] = setOB(entry)
+          }else{
+            searchObj["offical"][entry.name] = setOB(entry)
+          }
+           
+        }
       }
       searchObj["show-offical"] = searchObj["offical"];
       drawAddons("offical-addons", searchObj["show-offical"]);
@@ -165,6 +191,7 @@ window.addEventListener('load', async ()=>{
         offical: true,
         dl: entry.dl,
         verified: entry.verified,
+        version: entry.version
       };
     }
 
