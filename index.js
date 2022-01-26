@@ -42,8 +42,7 @@ app.get("/details/:uuid", async (req, res) => {
         return res.redirect("/")
     }
 
-  const selectQuery = "SELECT * FROM downloads WHERE uuid = '" + uuid + "'";
-  DB.query(selectQuery, async (err,result) => {
+  DB.query(`SELECT * from downloads WHERE uuid = '${uuid}'`, async (err,result) => {
     if(err){
       return res.json(err);
     }
