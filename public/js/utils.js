@@ -1,8 +1,8 @@
 function changeURL(){
-    var searchVal = $(`#offical-search`).val();
-    var version = $(`#offical-version`).val();
-    var verified = $(`#offical-only`).hasClass("checked");
-    var q = "?"
+    const searchVal = $(`#offical-search`).val();
+    const version = $(`#offical-version`).val();
+    const verified = $(`#offical-only`).hasClass("checked");
+    let q = "?"
     if(searchVal !== ""){
         q += `search=${searchVal}`
     }
@@ -12,9 +12,9 @@ function changeURL(){
 }
 
 function changeQueryString(searchString, documentTitle){      
-    documentTitle = typeof documentTitle !== 'undefined' ? documentTitle : document.title;      
-    var urlSplit=( window.location.href ).split( "?" );      
-    var obj = { Title: documentTitle, Url: urlSplit[0] + searchString };      
+    documentTitle = typeof documentTitle !== 'undefined' ? documentTitle : document.title;
+    const urlSplit=( window.location.href ).split( "?" );
+    const obj = { Title: documentTitle, Url: urlSplit[0] + searchString };
     history.pushState(obj, obj.Title, obj.Url);      
 }
 function download(el){
