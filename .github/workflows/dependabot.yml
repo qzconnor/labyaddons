@@ -1,15 +1,1 @@
-version: 2
-updates:
-  # Enable version updates for npm
-  - package-ecosystem: "npm"
-    # Look for `package.json` and `lock` files in the `root` directory
-    directory: "/"
-    # Check the npm registry for updates every day at 10:15 (weekdays)
-    schedule:
-      interval: "daily"
-      time: "10:15"
-      timezone: "Europe/Berlin"
-    # assignees connor and lennart to the pr
-    assignees:
-      - "qzconnor"
-      - "l3nnartt"
+
