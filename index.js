@@ -8,8 +8,8 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 const http = require("http");
 
 // Set up rate limiter
-const RateLimit = require('express-rate-limit');
-const limiter = new RateLimit({
+const RateLimit = require('express-rate-limit')
+const limiter = RateLimit({
   windowMs: 60*1000, // 1 minute time
   max: 100 // 100 requests
 });
