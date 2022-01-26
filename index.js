@@ -1,7 +1,7 @@
 const CONFIG = require("./config.json");
 
 const express = require("express");
-const exphbs = require("express-handlebars");
+const { engine } = require('express-handlebars');
 const app = express();
 const fs = require("fs");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -15,7 +15,7 @@ const limiter = new RateLimit({
 });
 
 app.use(express.json());
-app.engine("handlebars", exphbs());
+app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.use("/static", express.static("public"));
 app.use(limiter);
