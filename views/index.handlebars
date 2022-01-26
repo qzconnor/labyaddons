@@ -20,68 +20,78 @@
 		<span style="color: #AAAAAA;">[</span> 
 		<span style="color: #FF5555; font-weight: bold;">!</span> 
 		<span style="color: #AAAAAA;">]</span> 
-		<span style="color: #AAAAAA;"> Addons are provided by <a href="https://www.labymod.net" style="color: #AAAAAA;">Labymod</a></span> 
+		<span style="color: #AAAAAA;"> Addons are provided by <a href="https://www.labymod.net" style="color: #AAAAAA;">LabyMod</a></span>
 		<span style="color: #AAAAAA;">[</span> 
 		<span style="color: #FF5555; font-weight: bold;">!</span> 
 		<span style="color: #AAAAAA;">]</span> 
 	</div>
 </div>
+
 <div class="wrapper-addon">
 	<div class="wrapper">
-<div class="center">
-					<!--<input type="checkbox" id="offical-only" checked="false">-->
-					<div class="checkbox">
-						<span class="title">FEATURED ONLY</span>
-						<div id="offical-only">
-							<img src="./static/images/check.png" alt="checkbox-icon" id="checkbox-icon">
-						</div>
-					</div>
-					
-					<input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
-					<div class="select">
-					<select id="offical-version">
-						<option selected value="18">1.8</option>
-						<option value="112">1.12</option>
-						<option value="116">1.16</option>
-					</select>
-					<div class="select_arrow">
-				</div>
-				</div>
-				<button class="btn share" id="share" onclick="share();"><i class="fas fa-share-alt"></i></button>
-			</div>
-			<div class="center time"><p class="lastfetch"></p></div>
-							
-			<div class="center">
-				<div id="offical-addons" class="addons"></div>
-			</div>
-</div>
+        <div class="center">
+            <!--<input type="checkbox" id="offical-only" checked="false">-->
+            <div class="checkbox">
+                <span class="title">FEATURED ONLY</span>
+                <div id="offical-only">
+                    <img src="./static/images/check.png" alt="checkbox-icon" id="checkbox-icon">
+                </div>
+            </div>
 
-<div id="links">
-	<a href="imprint">Imprint</a> /
-	<a href="privacy">Privacy Policy</a> /
-    <a href="https://github.com/qzconnor/labyaddons">GitHub</a>
-</div>
+            <label for="offical-search"></label>
+            <input type="text" autocomplete="off" id="offical-search" class="search" placeholder="Search..."/>
 
-<template id="addon-template">
-	<div class="addon-card">
-	<img id="icon" src="#" alt="NAME" class="addon-img">
-	<div class="addon-text">
-		<div class="name-wrap" id="name-wrap" data-verified="false">
-			<h2 id="name">ADDON NAME</h2>
-			<div class="tooltip"><span class="verified-badge"><i class="fas fa-star"></i></span>
-				<span class="tooltiptext">LabyMod Featured</span>
-			</div>
-		
-		</div>
-		
-		<p id="author">ADDON AUTHOR</p>
-		<p id="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate incidunt recusandae at? Est odit suscipit consequuntur? Dignissimos aut assumenda tempore, a perspiciatis odit quas voluptatum optio dicta, ex tempora doloremque.</p>
-	</div>  
-	<div class="vertical-center">
-		<button class="btn download" id="download" onclick="download(this);"><i class="fas fa-download"></i></button>
-		<button class="btn download" id="open"><i class="fas fa-external-link-alt"></i></button>
-	</div>
-</template>
+            <div class="select">
+                <select id="offical-version">
+                    <option selected value="18">1.8</option>
+                    <option value="112">1.12</option>
+                    <option value="116">1.16</option>
+                </select>
+                <div class="select_arrow">
+                </div>
+            </div>
+                <button class="btn share" id="share" onclick="share();">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+        </div>
+
+        <div class="center time">
+            <p class="lastfetch"></p>
+        </div>
+
+        <div class="center">
+            <div id="offical-addons" class="addons"></div>
+        </div>
+
+        <div id="links">
+            <a href="imprint">Imprint</a> /
+            <a href="privacy">Privacy Policy</a> /
+            <a href="https://github.com/qzconnor/labyaddons">GitHub</a>
+        </div>
+
+        <template id="addon-template">
+            <div class="addon-card">
+                <img id="icon" src="#" alt="NAME" class="addon-img">
+                <div class="addon-text">
+                    <div class="name-wrap" id="name-wrap" data-verified="false">
+                        <h2 id="name">ADDON NAME</h2>
+                        <div class="tooltip"><span class="verified-badge"><i class="fas fa-star"></i></span>
+                            <span class="tooltiptext">LabyMod Featured</span>
+                        </div>
+
+                    </div>
+
+                    <p id="author">ADDON AUTHOR</p>
+                    <p id="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate incidunt recusandae at? Est odit suscipit consequuntur? Dignissimos aut assumenda tempore, a perspiciatis odit quas voluptatum optio dicta, ex tempora doloremque.</p>
+                </div>
+                <div class="vertical-center">
+                    <button class="btn download" id="download" onclick="download(this);"><i class="fas fa-download"></i></button>
+                    <button class="btn download" id="open"><i class="fas fa-external-link-alt"></i></button>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script type="text/javascript">

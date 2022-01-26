@@ -7,10 +7,18 @@ const fs = require("fs");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const http = require("http");
 
+// Set up rate limiter
+const RateLimit = require('express-rate-limit');
+const limiter = new RateLimit({
+  windowMs: 60*1000, // 1 minute time
+  max: 100 // 100 requests
+});
+
 app.use(express.json());
 app.engine("handlebars", exphbs());
 app.set("view engine", "handlebars");
 app.use("/static", express.static("public"));
+app.use(limiter);
 
 const DB = require("./services/database.service.js");
 
@@ -29,46 +37,42 @@ app.get("/imprint", async (req, res) => {
 });
 
 app.get("/details/:uuid", async (req, res) => {
-    var uuid = req.params.uuid;
-    if(!uuid){
+  const uuid = req.params.uuid;
+  if(!uuid){
         return res.redirect("/")
     }
 
-    DB.query(`SELECT * from downloads WHERE uuid = '${uuid}'`, async (err,result) => {
-      if(err){
-        return res.json(err);
-      }
-      
-      var url = req.protocol + "://" + req.get("host");
-      var addon = await getAddonByUUID(url, uuid)
+  const selectQuery = "SELECT * FROM downloads WHERE uuid = '" + uuid + "'";
+  DB.query(selectQuery, async (err,result) => {
+    if(err){
+      return res.json(err);
+    }
 
-      if(addon.error){
-          return res.redirect("/")
-      }
-      if(!addon.addon){
-          return res.redirect("/")
-      }
-      var downloads = 0;
-      if(result.length > 0){
-        downloads = result[0].downloads;
-      }
-      res.render("details", {
-          layout: "details",
-          title: req.hostname + " - Details",
-          uuid,
-          author: addon.addon.author,
-          name:addon.addon.name,
-          desc:addon.addon.description,
-          isVerified: addon.addon.verified,
-          imageURL: `https://dl.labymod.net/latest/addons/${uuid}/icon.png`,
-          downloads
-      });
+    const url = req.protocol + "://" + req.get("host");
+    const addon = await getAddonByUUID(url, uuid)
+
+    if(addon.error){
+        return res.redirect("/")
+    }
+    if(!addon.addon){
+        return res.redirect("/")
+    }
+    let downloads = 0;
+    if(result.length > 0){
+      downloads = result[0].downloads;
+    }
+    res.render("details", {
+        layout: "details",
+        title: req.hostname + " - Details",
+        uuid,
+        author: addon.addon.author,
+        name:addon.addon.name,
+        desc:addon.addon.description,
+        isVerified: addon.addon.verified,
+        imageURL: `https://dl.labymod.net/latest/addons/${uuid}/icon.png`,
+        downloads
     });
-
-    //uuid = "d4389488-2692-436b-bc10-fce879f7441d";
-
-
-
+  });
 });
 
 app.get("/privacy", async (req, res) => {
@@ -78,7 +82,7 @@ app.get("/privacy", async (req, res) => {
 });
 
 app.get("/api/offical", async (req, res) => {
-  var addons = {
+  const addons = {
     18: [],
     112: [],
     116: [],
@@ -86,9 +90,9 @@ app.get("/api/offical", async (req, res) => {
   let rawdata = fs.readFileSync("./public/addons.json");
   let result = JSON.parse(rawdata);
 
-  for (var key of Object.keys(result.addons)) {
-    var addon = result.addons[key];
-    for (var a of addon) {
+  for (const key of Object.keys(result.addons)) {
+    const addon = result.addons[key];
+    for (const a of addon) {
       addons[key].push({
         name: a.name,
         uuid: a.uuid,
@@ -109,9 +113,9 @@ app.get("/api/offical", async (req, res) => {
   });
 });
 app.get("/download", async (req, res) => {
-  var addonUuid = req.query.q;
-  var url = req.protocol + "://" + req.get("host");
-  var name = await getNameByUUID(url, addonUuid);
+  const addonUuid = req.query.q;
+  const url = req.protocol + "://" + req.get("host");
+  const name = await getNameByUUID(url, addonUuid);
 
   if (!name.error) {
 
@@ -120,7 +124,7 @@ app.get("/download", async (req, res) => {
         return console.error(err);
       }
       if(res.length > 0){
-        var first = parseInt(res[0].downloads);
+        const first = parseInt(res[0].downloads);
         DB.query(`UPDATE downloads SET downloads='${(first + 1)}' WHERE uuid='${addonUuid}'`, (err, res) => {
           if(err){
             return console.error(err);
@@ -184,39 +188,38 @@ function download(url, dest, cb) {
 }
 
 async function getAddonByUUID(baseURL, uuid) {
-    var res = await fetch(baseURL + "/api/offical");
-    var text = await res.text();
-    var json = JSON.parse(text).addons;
-  
-    if (uuid) {
-      var resAddon = undefined;
-      for (var key of Object.keys(json)) {
-        for (var o of json[key]) {
-          if (o.uuid === uuid) {
-            resAddon = o;
-            continue;
-          }
-        }
-      }
-      return {
-        addon: resAddon,
-      };
-    } else {
-      return {
-        error: "UUID not defined",
-      };
-    }
-  }
-
-async function getNameByUUID(baseURL, uuid) {
-  var res = await fetch(baseURL + "/api/offical");
-  var text = await res.text();
-  var json = JSON.parse(text).addons;
+  const res = await fetch(baseURL + "/api/offical");
+  const text = await res.text();
+  const json = JSON.parse(text).addons;
 
   if (uuid) {
-    var resName = undefined;
-    for (var key of Object.keys(json)) {
-      for (var o of json[key]) {
+    let resAddon = undefined;
+    for (const key of Object.keys(json)) {
+      for (const o of json[key]) {
+        if (o.uuid === uuid) {
+          resAddon = o;
+        }
+      }
+    }
+    return {
+      addon: resAddon,
+    };
+  } else {
+    return {
+      error: "UUID not defined",
+    };
+  }
+}
+
+async function getNameByUUID(baseURL, uuid) {
+  const res = await fetch(baseURL + "/api/offical");
+  const text = await res.text();
+  const json = JSON.parse(text).addons;
+
+  if (uuid) {
+    let resName = undefined;
+    for (const key of Object.keys(json)) {
+      for (const o of json[key]) {
         if (o.uuid === uuid) {
           resName = o.name;
         }
@@ -231,6 +234,7 @@ async function getNameByUUID(baseURL, uuid) {
     };
   }
 }
+
 app.get("*", function (req, res) {
   res.redirect("/");
 });
