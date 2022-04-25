@@ -1,13 +1,13 @@
 {
   "name": "LabyAddons",
   "version": "2.2.1",
-  "description": "",
+  "description": "Website with a list of all official LabyMod Addons",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "qzconnor, l3nnartt",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.3",
