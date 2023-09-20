@@ -66,7 +66,7 @@ window.addEventListener('load', async ()=>{
         searchObj["show-offical"] = searchObj["offical"];
         drawAddons("offical-addons", searchObj["show-offical"]);
       } else {
-        searchObj["show-offical"] = getAddonsStartsWith(searchObj["offical"], q);
+        searchObj["show-offical"] = getAddonContains(searchObj["offical"], q);
         drawAddons("offical-addons", searchObj["show-offical"]);
       }
     }
@@ -119,12 +119,12 @@ window.addEventListener('load', async ()=>{
       return str.substring(0, len) + (str.length >= len ? "..." : "");
     }
   
-    function getAddonsStartsWith(object, str) {
+    function getAddonContains(object, str) {
         const addonResult = {};
       for (const property in object) {
         if (
           object.hasOwnProperty(property) &&
-          property.toLowerCase().toString().startsWith(str.toLowerCase())
+          property.toLowerCase().toString().includes(str.toLowerCase())
         ) {
           addonResult[property] = object[property];
         }
