@@ -1,6 +1,6 @@
 {
-  "name": "LabyAddons",
-  "version": "2.2.1",
+  "name": "labyaddons",
+  "version": "2.3.0",
   "description": "Website with a list of all official LabyMod Addons",
   "main": "index.js",
   "scripts": {

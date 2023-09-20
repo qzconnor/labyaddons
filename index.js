@@ -139,7 +139,7 @@ app.get("/download", async (req, res) => {
 
     })
     download(
-      `http://dl.labymod.net/latest/?file=${addonUuid}&a=1`,
+      `https://dl.labymod.net/latest/?file=${addonUuid}&a=1`,
       `./temp/${name.name}.jar`,
       (err) => {
         if (!err) {
